@@ -10,43 +10,43 @@
             margin: 0;
             font-family: 'Raleway', sans-serif;
             background: linear-gradient(135deg, #ffffff, #ffffff);
-            min-height: 100vh; /* Changed to min-height */
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            overflow-x: hidden; /* Prevents horizontal scroll */
+            overflow-x: hidden;
         }
         .header {
             text-align: center;
             color: #000;
             animation: fadeIn 1s ease-in;
-            padding: 20px 10px; /* Added padding for mobile */
+            padding: 20px 10px;
         }
         .header img {
-            max-width: 250px; /* Slightly smaller for mobile */
+            max-width: 250px;
             height: auto;
         }
         .header p {
-            font-size: 1.1rem; /* Slightly smaller base size */
+            font-size: 1.1rem;
             margin: 10px 0;
             animation: slideIn 1s ease-in 0.5s forwards;
             opacity: 0;
         }
         .options {
             display: flex;
-            flex-wrap: wrap; /* Allows stacking on smaller screens */
-            gap: 20px; /* Reduced gap for mobile */
-            margin-top: 30px; /* Reduced margin */
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 30px;
             justify-content: center;
-            padding: 0 10px; /* Added padding for edges */
+            padding: 0 10px;
         }
         .card {
             background: #fff;
-            padding: 15px; /* Reduced padding */
+            padding: 15px;
             border-radius: 15px;
-            max-width: 300px; /* Changed to max-width */
-            width: 100%; /* Flexible width */
+            max-width: 300px;
+            width: 100%;
             text-align: center;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s, box-shadow 0.3s;
@@ -70,15 +70,15 @@
             color: inherit;
             display: block;
             height: 100%;
-            cursor: pointer; /* Clear clickable indicator */
+            cursor: pointer;
         }
         .card h2 {
-            font-size: 1.3rem; /* Slightly smaller for mobile */
+            font-size: 1.3rem;
             color: #333;
             margin: 0;
         }
         .card p {
-            font-size: 0.85rem; /* Slightly smaller for mobile */
+            font-size: 0.85rem;
             color: #666;
             margin: 8px 0 0;
         }
@@ -91,25 +91,28 @@
             left: 0;
             width: 100%;
             height: 100%;
-            opacity: 0;
+            opacity: 0.3; /* Default opacity to show animation always */
             transition: opacity 0.3s;
             pointer-events: none;
         }
         .card:nth-child(2):hover #aiCanvas {
-            opacity: 0.3;
+            opacity: 0.3; /* Maintains visibility on hover */
+        }
+        .card:nth-child(1):hover ~ .card:nth-child(2) #aiCanvas {
+            opacity: 0; /* Hides animation when hovering Card 1 */
         }
         .footer {
-            margin-top: 30px; /* Reduced margin */
-            margin-bottom: 20px; /* Added bottom margin */
+            margin-top: 30px;
+            margin-bottom: 20px;
             text-align: center;
-            font-size: 0.85rem; /* Slightly smaller */
+            font-size: 0.85rem;
             color: #666;
         }
         .footer img {
-            max-width: 80px; /* Smaller for mobile */
+            max-width: 80px;
             height: auto;
             vertical-align: middle;
-            transition: transform 0.3s; /* Smooth hover transition */
+            transition: transform 0.3s;
         }
         .footer a {
             text-decoration: none;
@@ -122,14 +125,14 @@
         /* Media Queries for Mobile */
         @media (max-width: 768px) {
             .options {
-                flex-direction: column; /* Stack cards vertically */
+                flex-direction: column;
                 align-items: center;
             }
             .card {
-                max-width: 90%; /* Wider on small screens */
+                max-width: 90%;
             }
             .header img {
-                max-width: 200px; /* Further reduce logo size */
+                max-width: 200px;
             }
             .header p {
                 font-size: 1rem;
@@ -147,7 +150,7 @@
 
         @media (max-width: 480px) {
             .header img {
-                max-width: 150px; /* Even smaller for tiny screens */
+                max-width: 150px;
             }
             .header p {
                 font-size: 0.9rem;
@@ -240,30 +243,32 @@
         }
 
         function animate() {
-            if (card.matches(':hover')) {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                nodes.forEach(node => {
-                    node.update();
-                    node.draw();
-                });
-                for (let i = 0; i < nodes.length; i++) {
-                    for (let j = i + 1; j < nodes.length; j++) {
-                        const dist = Math.hypot(nodes[i].x - nodes[j].x, nodes[i].y - nodes[j].y);
-                        if (dist < 100) {
-                            ctx.beginPath();
-                            ctx.moveTo(nodes[i].x, nodes[i].y);
-                            ctx.lineTo(nodes[j].x, nodes[j].y);
-                            ctx.strokeStyle = `rgba(252, 169, 5, ${1 - dist / 100})`;
-                            ctx.lineWidth = 1;
-                            ctx.stroke();
-                        }
+            // Always animate by default, unless Card 1 is hovered
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            nodes.forEach(node => {
+                node.update();
+                node.draw();
+            });
+            for (let i = 0; i < nodes.length; i++) {
+                for (let j = i + 1; j < nodes.length; j++) {
+                    const dist = Math.hypot(nodes[i].x - nodes[j].x, nodes[i].y - nodes[j].y);
+                    if (dist < 100) {
+                        ctx.beginPath();
+                        ctx.moveTo(nodes[i].x, nodes[i].y);
+                        ctx.lineTo(nodes[j].x, nodes[j].y);
+                        ctx.strokeStyle = `rgba(252, 169, 5, ${1 - dist / 100})`;
+                        ctx.lineWidth = 1;
+                        ctx.stroke();
                     }
                 }
             }
             requestAnimationFrame(animate);
         }
 
-        animate();
+        // Start animation immediately after page load
+        window.addEventListener('load', () => {
+            animate();
+        });
     </script>
 </body>
 </html>
