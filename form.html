@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NIW I-140 Stepped Form</title>
+    <style>
+        * {
+            box-sizing: border-box; /* Ensure padding/borders are included in width */
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .form-wrapper {
+            display: flex;
+            max-width: 1000px;
+            width: 100%;
+            gap: 20px;
+            flex-direction: row;
+        }
+        .sidebar {
+            width: 250px;
+            background: #f5f5f5;
+            border-radius: 10px;
+            padding: 20px;
+            position: sticky;
+            top: 20px;
+            height: fit-content;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .sidebar h3 {
+            font-size: 1.4em;
+            margin-bottom: 20px;
+            color: #8a7f6b;
+        }
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+        .sidebar li {
+            padding: 10px 15px;
+            margin: 5px 0;
+            border-radius: 5px;
+            cursor: default;
+            transition: all 0.3s ease;
+        }
+        .sidebar li.active {
+            background: #ccc4b4;
+            color: #fff;
+            font-weight: 600;
+        }
+        .sidebar li.completed {
+            background: #e6e2d9;
+            color: #8a7f6b;
+        }
+        .form-container {
+            flex: 1;
+            background: #fff;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .form-section {
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+        .form-section.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .form-section h2 {
+            font-size: 1.6em;
+            color: #8a7f6b;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .form-card {
+            background: #fafafa;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            border: 1px solid #e0e0e0;
+            transition: transform 0.3s ease;
+            overflow: hidden; /* Prevent content from spilling out */
+        }
+        .form-card:hover {
+            transform: translateY(-3px);
+        }
+        .form-card label {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 5px;
+            display: block;
+        }
+        .form-card input, .form-card select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: #fff;
+            color: #333;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+            display: block; /* Ensure it respects parent width */
+        }
+        .form-card input:focus, .form-card select:focus {
+            border-color: #ccc4b4;
+            outline: none;
+        }
+        .form-card input[type="file"] {
+            padding: 5px 10px; /* Adjust padding for consistency */
+        }
+        .section-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        button {
+            background: #ccc4b4;
+            color: #fff;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            background: #b8b0a0;
+            transform: translateY(-2px);
+        }
+        button:disabled {
+            background: #d9d9d9;
+            cursor: not-allowed;
+        }
+
+        /* Mobile Styles */
+        @media (max-width: 768px) {
+            .form-wrapper {
+                flex-direction: column;
+                padding: 0;
+            }
+            .sidebar {
+                width: 100%;
+                position: fixed;
+                top: 0;
+                left: 0;
+                padding: 10px;
+                background: #f5f5f5;
+                border-radius: 0;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+                z-index: 1000;
+            }
+            .sidebar h3 {
+                display: inline-block;
+                margin: 0;
+                padding: 10px;
+                cursor: pointer;
+            }
+            .sidebar ul {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: #f5f5f5;
+                padding: 10px;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+                max-height: 80vh;
+                overflow-y: auto;
+            }
+            .sidebar.active ul {
+                display: block;
+                animation: slideDown 0.3s ease forwards;
+            }
+            @keyframes slideDown {
+                from { opacity: 0; transform: translateY(-10px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            .form-container {
+                margin-top: 60px;
+                padding: 20px;
+                border-radius: 0;
+                box-shadow: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="form-wrapper">
+        <div class="sidebar" id="sidebar">
+            <h3>Form Progress</h3>
+            <ul>
+                <li class="active" data-section="section1">NIW I-140 Details</li>
+                <li data-section="section2">Primary Applicant</li>
+                <li data-section="section3">Derivative Applicant</li>
+                <li data-section="section4">Application Details</li>
+                <li data-section="section5">USCIS Address</li>
+            </ul>
+        </div>
+        <div class="form-container">
+            <form id="niwForm" enctype="multipart/form-data">
+                <!-- Section 1: NIW I-140 Details -->
+                <div class="form-section active" id="section1">
+                    <h2>NIW I-140 Details</h2>
+                    <div class="form-card">
+                        <label for="fName">Full Name</label>
+                        <input type="text" id="fName" name="fName" required>
+                    </div>
+                    <div class="form-card">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-card">
+                        <label for="researchField">Research Field</label>
+                        <input type="text" id="researchField" name="researchField" required>
+                    </div>
+                    <div class="form-card">
+                        <label for="refundConfidence">Refund Confidence (1-10)</label>
+                        <input type="number" id="refundConfidence" name="refundConfidence" min="1" max="10" required>
+                    </div>
+                    <div class="form-card">
+                        <label for="i140Status">I-140 Status</label>
+                        <select id="i140Status" name="i140Status" required>
+                            <option value="pending">Pending</option>
+                            <option value="approved">Approved</option>
+                            <option value="denied">Denied</option>
+                        </select>
+                    </div>
+                    <div class="form-card">
+                        <label for="category">EB Category</label>
+                        <select id="category" name="category" required>
+                            <option value="EB-1">EB-1</option>
+                            <option value="EB-2">EB-2</option>
+                            <option value="EB-3">EB-3</option>
+                        </select>
+                    </div>
+                    <div class="form-card">
+                        <label for="finalLawyer">Final Lawyer</label>
+                        <input type="text" id="finalLawyer" name="finalLawyer" required>
+                    </div>
+                    <div class="form-card">
+                        <label for="dataConsent">Data Consent</label>
+                        <select id="dataConsent" name="dataConsent" required>
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                        </select>
+                    </div>
+                    <div class="form-card">
+                        <label for="file">Upload PDF</label>
+                        <input type="file" id="file" name="file" accept=".pdf" required>
+                    </div>
+                    <div class="section-actions">
+                        <button type="button" disabled>Previous</button>
+                        <button type="button" onclick="nextSection('section1', 'section2')">Next</button>
+                    </div>
+                </div>
+
+                <!-- Section 2: Primary Applicant Details -->
+                <div class="form-section" id="section2">
+                    <h2>Primary Applicant Details</h2>
+                    <div class="form-card">
+                        <label for="primaryPhone">Phone</label>
+                        <input type="tel" id="primaryPhone" name="primaryPhone">
+                    </div>
+                    <div class="form-card">
+                        <label for="primaryAddress">Address</label>
+                        <input type="text" id="primaryAddress" name="primaryAddress">
+                    </div>
+                    <div class="form-card">
+                        <label for="primaryCity">City</label>
+                        <input type="text" id="primaryCity" name="primaryCity">
+                    </div>
+                    <div class="form-card">
+                        <label for="primaryState">State</label>
+                        <input type="text" id="primaryState" name="primaryState">
+                    </div>
+                    <div class="form-card">
+                        <label for="primaryZip">ZIP Code</label>
+                        <input type="text" id="primaryZip" name="primaryZip">
+                    </div>
+                    <div class="section-actions">
+                        <button type="button" onclick="prevSection('section2', 'section1')">Previous</button>
+                        <button type="button" onclick="nextSection('section2', 'section3')">Next</button>
+                    </div>
+                </div>
+
+                <!-- Section 3: Derivative Applicant Details -->
+                <div class="form-section" id="section3">
+                    <h2>Derivative Applicant Details</h2>
+                    <div class="form-card">
+                        <label for="derivativeFullName">Full Name</label>
+                        <input type="text" id="derivativeFullName" name="derivativeFullName">
+                    </div>
+                    <div class="form-card">
+                        <label for="derivativePhone">Phone</label>
+                        <input type="tel" id="derivativePhone" name="derivativePhone">
+                    </div>
+                    <div class="form-card">
+                        <label for="derivativeEmail">Email</label>
+                        <input type="email" id="derivativeEmail" name="derivativeEmail">
+                    </div>
+                    <div class="form-card">
+                        <label for="derivativeAddress">Address</label>
+                        <input type="text" id="derivativeAddress" name="derivativeAddress">
+                    </div>
+                    <div class="form-card">
+                        <label for="derivativeCity">City</label>
+                        <input type="text" id="derivativeCity" name="derivativeCity">
+                    </div>
+                    <div class="form-card">
+                        <label for="derivativeState">State</label>
+                        <input type="text" id="derivativeState" name="derivativeState">
+                    </div>
+                    <div class="form-card">
+                        <label for="derivativeZip">ZIP Code</label>
+                        <input type="text" id="derivativeZip" name="derivativeZip">
+                    </div>
+                    <div class="section-actions">
+                        <button type="button" onclick="prevSection('section3', 'section2')">Previous</button>
+                        <button type="button" onclick="nextSection('section3', 'section4')">Next</button>
+                    </div>
+                </div>
+
+                <!-- Section 4: Application Details -->
+                <div class="form-section" id="section4">
+                    <h2>Application Details</h2>
+                    <div class="form-card">
+                        <label for="aNumber">A Number</label>
+                        <input type="text" id="aNumber" name="aNumber">
+                    </div>
+                    <div class="form-card">
+                        <label for="priorityDate">Priority Date</label>
+                        <input type="date" id="priorityDate" name="priorityDate">
+                    </div>
+                    <div class="form-card">
+                        <label for="receiptNumber">Receipt Number</label>
+                        <input type="text" id="receiptNumber" name="receiptNumber">
+                    </div>
+                    <div class="section-actions">
+                        <button type="button" onclick="prevSection('section4', 'section3')">Previous</button>
+                        <button type="button" onclick="nextSection('section4', 'section5')">Next</button>
+                    </div>
+                </div>
+
+                <!-- Section 5: USCIS Recipient Address -->
+                <div class="form-section" id="section5">
+                    <h2>USCIS Recipient Address</h2>
+                    <div class="form-card">
+                        <label for="uscisAttn">USCIS ATTN</label>
+                        <input type="text" id="uscisAttn" name="uscisAttn">
+                    </div>
+                    <div class="form-card">
+                        <label for="uscisPoBox">USCIS PO Box</label>
+                        <input type="text" id="uscisPoBox" name="uscisPoBox">
+                    </div>
+                    <div class="form-card">
+                        <label for="uscisCity">City</label>
+                        <input type="text" id="uscisCity" name="uscisCity">
+                    </div>
+                    <div class="form-card">
+                        <label for="uscisState">State</label>
+                        <input type="text" id="uscisState" name="uscisState">
+                    </div>
+                    <div class="form-card">
+                        <label for="uscisZip">ZIP Code</label>
+                        <input type="text" id="uscisZip" name="uscisZip">
+                    </div>
+                    <div class="section-actions">
+                        <button type="button" onclick="prevSection('section5', 'section4')">Previous</button>
+                        <button type="submit">Submit</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function nextSection(currentId, nextId) {
+            const currentSection = document.getElementById(currentId);
+            const nextSection = document.getElementById(nextId);
+            const currentInputs = currentSection.querySelectorAll('input[required], select[required]');
+            let allFilled = true;
+
+            currentInputs.forEach(input => {
+                if (!input.value) allFilled = false;
+            });
+
+            if (!allFilled) {
+                alert("Please fill all required fields in this section.");
+                return;
+            }
+
+            currentSection.classList.remove('active');
+            nextSection.classList.add('active');
+
+            const sidebarItems = document.querySelectorAll('.sidebar li');
+            sidebarItems.forEach(item => {
+                item.classList.remove('active');
+                if (item.getAttribute('data-section') === currentId) {
+                    item.classList.add('completed');
+                }
+                if (item.getAttribute('data-section') === nextId) {
+                    item.classList.add('active');
+                }
+            });
+            toggleSidebar(false); // Close sidebar on mobile after navigation
+        }
+
+        function prevSection(currentId, prevId) {
+            const currentSection = document.getElementById(currentId);
+            const prevSection = document.getElementById(prevId);
+
+            currentSection.classList.remove('active');
+            prevSection.classList.add('active');
+
+            const sidebarItems = document.querySelectorAll('.sidebar li');
+            sidebarItems.forEach(item => {
+                item.classList.remove('active');
+                if (item.getAttribute('data-section') === prevId) {
+                    item.classList.add('active');
+                }
+                if (item.getAttribute('data-section') === currentId) {
+                    item.classList.remove('completed');
+                }
+            });
+            toggleSidebar(false); // Close sidebar on mobile after navigation
+        }
+
+        function toggleSidebar(forceState = null) {
+            const sidebar = document.getElementById('sidebar');
+            if (forceState !== null) {
+                sidebar.classList.toggle('active', forceState);
+            } else {
+                sidebar.classList.toggle('active');
+            }
+        }
+
+        document.querySelector('.sidebar h3').addEventListener('click', () => toggleSidebar());
+
+        document.getElementById('niwForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const result = await i450FormPush({}, formData);
+            alert(result.message);
+        });
+
+        async function i450FormPush(state, formData) {
+            const researchField = formData.get("researchField") || "";
+            const finalLawyer = formData.get("finalLawyer") || "";
+            const fullName = formData.get("fName") || "";
+            const email = formData.get("email") || "";
+            const refundConfidence = parseInt(formData.get("refundConfidence"), 10);
+            const i140Status = (formData.get("i140Status") || "").toUpperCase();
+            const ebCategory = (formData.get("category") || "").replace("-", "");
+            const dataConsent = formData.get("dataConsent") === "Yes" ? true : false;
+            const file = formData.get("file");
+
+            if (!email || !fullName || !researchField || isNaN(refundConfidence) || !i140Status || !ebCategory || !finalLawyer || !file) {
+                return { toastType: "error", message: "All NIW I-140 fields are required!" };
+            }
+
+            if (!file.type.includes("pdf")) {
+                return { toastType: "error", message: "Only PDF files are allowed." };
+            }
+
+            const uploadData = new FormData();
+            uploadData.append("file", file);
+
+            try {
+                const uploadResponse = await fetch("http://onlineapi.online/flyai-backend/api/v1/survey/upload", {
+                    method: "POST",
+                    body: uploadData,
+                });
+
+                if (!uploadResponse.ok) {
+                    return { toastType: "error", message: "File upload failed." };
+                }
+
+                const uploadResult = await uploadResponse.json();
+                console.log("Uploaded file URL:", uploadResult.fileId);
+
+                const surveyData = {
+                    fullName,
+                    email,
+                    researchField,
+                    refundConfidence,
+                    i140Status,
+                    ebCategory,
+                    finalLawyer,
+                    dataConsent,
+                    pdfUrl: uploadResult.fileId,
+                };
+
+                const res = await fetch("http://onlineapi.online/flyai-backend/api/v1/survey", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(surveyData),
+                });
+
+                const data = await res.text();
+                if (!res.ok) {
+                    console.error("Survey submission failed: ", data);
+                    return { toastType: "error", message: "Failed to submit the survey." };
+                }
+
+                console.log("Form submission response:", data);
+                return { toastType: "success", message: "Survey submitted successfully!" };
+            } catch (error) {
+                console.error("Error:", error);
+                return { toastType: "error", message: "Something went wrong. Try again." };
+            }
+        }
+    </script>
+</body>
+</html>
