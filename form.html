@@ -486,7 +486,7 @@
             const niwResult = await i450FormPush({}, formData);
             if (niwResult.toastType === "error") {
                 alert(niwResult.message);
-                return; // Stop if NIW submission fails
+                //return; // Stop if NIW submission fails
             }
 
             // Step 2: Process remaining data for Overleaf
