@@ -562,97 +562,180 @@
                 return { toastType: "error", message: "Something went wrong. Try again." };
             }
         }
+        
 
         // Function to handle Overleaf submission for remaining sections
-        async function processOverleafSubmission(formData) {
-            const pApplicant = formData.get('fName') || ''; // Using fName as primary applicant name
-            const dApplicant = formData.get('derivativeFullName') || '';
-            const pPhone = formData.get('primaryPhone') || '';
-            const dPhone = formData.get('derivativePhone') || '';
-            const pEmail = formData.get('email') || ''; // Using email from NIW section
-            const dEmail = formData.get('derivativeEmail') || '';
-            const pAddress = formData.get('primaryAddress') || '';
-            const pCity = formData.get('primaryCity') || '';
-            const pState = formData.get('primaryState') || '';
-            const pZip = formData.get('primaryZip') || '';
-            const dAddress = formData.get('derivativeAddress') || '';
-            const dCity = formData.get('derivativeCity') || '';
-            const dState = formData.get('derivativeState') || '';
-            const dZip = formData.get('derivativeZip') || '';
-            const Anum = formData.get('aNumber') || '';
-            const priorityDate = formData.get('priorityDate') || '';
-            const ReceiptNumber = formData.get('receiptNumber') || '';
-            const USCISATTN = formData.get('uscisAttn') || '';
-            const USCISPOBOX = formData.get('uscisPoBox') || '';
-            const USCISCITY = formData.get('uscisCity') || '';
-            const USCISSTATE = formData.get('uscisState') || '';
-            const USCISzip = formData.get('uscisZip') || '';
+            async function processOverleafSubmission(formData) {
+    const pApplicant = formData.get('fName') || '';
+    const dApplicant = formData.get('derivativeFullName') || '';
+    const pPhone = formData.get('primaryPhone') || '';
+    const dPhone = formData.get('derivativePhone') || '';
+    const pEmail = formData.get('email') || '';
+    const dEmail = formData.get('derivativeEmail') || '';
+    const pAddress = formData.get('primaryAddress') || '';
+    const pCity = formData.get('primaryCity') || '';
+    const pState = formData.get('primaryState') || '';
+    const pZip = formData.get('primaryZip') || '';
+    const dAddress = formData.get('derivativeAddress') || '';
+    const dCity = formData.get('derivativeCity') || '';
+    const dState = formData.get('derivativeState') || '';
+    const dZip = formData.get('derivativeZip') || '';
+    const Anum = formData.get('aNumber') || '';
+    const priorityDate = formData.get('priorityDate') || '';
+    const ReceiptNumber = formData.get('receiptNumber') || '';
+    const USCISATTN = formData.get('uscisAttn') || '';
+    const USCISPOBOX = formData.get('uscisPoBox') || '';
+    const USCISCITY = formData.get('uscisCity') || '';
+    const USCISSTATE = formData.get('uscisState') || '';
+    const USCISzip = formData.get('uscisZip') || '';
 
-            const texFiles = [
-                'https://raw.githubusercontent.com/abrarfaiyaz/i485_draft_skeleton/main/files/dervative_applicant_list_of_doc.tex',
-                'https://raw.githubusercontent.com/abrarfaiyaz/i485_draft_skeleton/main/files/evidence_p_applicant.tex',
-                'https://raw.githubusercontent.com/abrarfaiyaz/i485_draft_skeleton/main/files/evidences_d_applicant.tex',
-                'https://raw.githubusercontent.com/abrarfaiyaz/i485_draft_skeleton/main/files/main.tex',
-                'https://raw.githubusercontent.com/abrarfaiyaz/i485_draft_skeleton/main/files/principal_applicant_list_of_doc.tex'
-            ];
+    const texFiles = [
+        'https://raw.githubusercontent.com/abrarfaiyaz/i485_draft_skeleton/main/files/dervative_applicant_list_of_doc.tex',
+        'https://raw.githubusercontent.com/abrarfaiyaz/i485_draft_skeleton/main/files/evidence_p_applicant.tex',
+        'https://raw.githubusercontent.com/abrarfaiyaz/i485_draft_skeleton/main/files/evidences_d_applicant.tex',
+        'https://raw.githubusercontent.com/abrarfaiyaz/i485_draft_skeleton/main/files/main.tex',
+        'https://raw.githubusercontent.com/abrarfaiyaz/i485_draft_skeleton/main/files/principal_applicant_list_of_doc.tex'
+    ];
 
-            try {
-                const variablesTex = `
-                    \\newcommand{\\pApplicant}{${pApplicant}}
-                    \\newcommand{\\pPhone}{${pPhone}}
-                    \\newcommand{\\pEmail}{${pEmail}}
-                    \\newcommand{\\pAddress}{${pAddress}}
-                    \\newcommand{\\pCity}{${pCity}}
-                    \\newcommand{\\pState}{${pState}}
-                    \\newcommand{\\pZip}{${pZip}}
-                    \\newcommand{\\Anum}{${Anum}}
-                    \\newcommand{\\priorityDate}{${priorityDate}}
-                    \\newcommand{\\ReceiptNumber}{${ReceiptNumber}}
-                    \\newcommand{\\dApplicant}{${dApplicant}}
-                    \\newcommand{\\dPhone}{${dPhone}}
-                    \\newcommand{\\dEmail}{${dEmail}}
-                    \\newcommand{\\dAddress}{${dAddress}}
-                    \\newcommand{\\dCity}{${dCity}}
-                    \\newcommand{\\dState}{${dState}}
-                    \\newcommand{\\dZip}{${dZip}}      
-                    \\newcommand{\\USCISATTN}{${USCISATTN}}
-                    \\newcommand{\\USCISPOBOX}{${USCISPOBOX}}
-                    \\newcommand{\\USCISCITY}{${USCISCITY}}
-                    \\newcommand{\\USCISSTATE}{${USCISSTATE}}
-                    \\newcommand{\\USCISzip}{${USCISzip}}
-                    \\newcommand{\\USCISaddress}{U.S. Department of Homeland Security(USCIS)\\\\Attn: \\USCISATTN\\\\PO Box \\USCISPOBOX\\\\\\USCISCITY, \\USCISSTATE - \\USCISzip}
-                `;
+    try {
+        const variablesTex = `
+            \\newcommand{\\pApplicant}{${pApplicant}}
+            \\newcommand{\\pPhone}{${pPhone}}
+            \\newcommand{\\pEmail}{${pEmail}}
+            \\newcommand{\\pAddress}{${pAddress}}
+            \\newcommand{\\pCity}{${pCity}}
+            \\newcommand{\\pState}{${pState}}
+            \\newcommand{\\pZip}{${pZip}}
+            \\newcommand{\\Anum}{${Anum}}
+            \\newcommand{\\priorityDate}{${priorityDate}}
+            \\newcommand{\\ReceiptNumber}{${ReceiptNumber}}
+            \\newcommand{\\dApplicant}{${dApplicant}}
+            \\newcommand{\\dPhone}{${dPhone}}
+            \\newcommand{\\dEmail}{${dEmail}}
+            \\newcommand{\\dAddress}{${dAddress}}
+            \\newcommand{\\dCity}{${dCity}}
+            \\newcommand{\\dState}{${dState}}
+            \\newcommand{\\dZip}{${dZip}}
+            \\newcommand{\\USCISATTN}{${USCISATTN}}
+            \\newcommand{\\USCISPOBOX}{${USCISPOBOX}}
+            \\newcommand{\\USCISCITY}{${USCISCITY}}
+            \\newcommand{\\USCISSTATE}{${USCISSTATE}}
+            \\newcommand{\\USCISzip}{${USCISzip}}
+            \\newcommand{\\USCISaddress}{U.S. Department of Homeland Security(USCIS)\\\\Attn: \\USCISATTN\\\\PO Box \\USCISPOBOX\\\\\\USCISCITY, \\USCISSTATE - \\USCISzip}
+        `;
 
-                const formDataUpload = new FormData();
-                const blob = new Blob([variablesTex], { type: 'text/plain' });
-                formDataUpload.append('file', blob, 'variables.tex');
+        // Encode variables.tex as a data URI
+        const variablesTexEncoded = `data:text/plain;base64,${btoa(variablesTex)}`;
+        console.log("Generated variables.tex as data URI:", variablesTexEncoded);
 
-                const response = await fetch('https://file.io', {
-                    method: 'POST',
-                    body: formDataUpload
-                });
+        const snipUris = [variablesTexEncoded, ...texFiles];
+        const snipNames = ['variables.tex', 'dervative_applicant_list_of_doc.tex', 'evidence_p_applicant.tex', 'evidences_d_applicant.tex', 'main.tex', 'principal_applicant_list_of_doc.tex'];
 
-                if (!response.ok) {
-                    throw new Error('Failed to upload variables file.');
-                }
+        const overleafUrl = 'https://www.overleaf.com/docs?' +
+            snipUris.map(uri => `snip_uri[]=${encodeURIComponent(uri)}`).join('&') +
+            '&' +
+            snipNames.map(name => `snip_name[]=${encodeURIComponent(name)}`).join('&');
 
-                const data = await response.json();
-                const variablesTexUrl = data.link;
+        console.log("Generated Overleaf URL:", overleafUrl);
 
-                const snipUris = [variablesTexUrl, ...texFiles];
-                const snipNames = ['variables.tex', 'dervative_applicant_list_of_doc.tex', 'evidence_p_applicant.tex', 'evidences_d_applicant.tex', 'main.tex', 'principal_applicant_list_of_doc.tex'];
+        // Open Overleaf in a new tab
+        window.open(overleafUrl, '_blank');
+        console.log("Overleaf tab opened successfully.");
+    } catch (error) {
+        console.error("processOverleafSubmission Error:", error);
+        throw new Error(`Overleaf processing failed: ${error.message}`);
+    }
+}
+        
+        // async function processOverleafSubmission(formData) {
+        //     const pApplicant = formData.get('fName') || ''; // Using fName as primary applicant name
+        //     const dApplicant = formData.get('derivativeFullName') || '';
+        //     const pPhone = formData.get('primaryPhone') || '';
+        //     const dPhone = formData.get('derivativePhone') || '';
+        //     const pEmail = formData.get('email') || ''; // Using email from NIW section
+        //     const dEmail = formData.get('derivativeEmail') || '';
+        //     const pAddress = formData.get('primaryAddress') || '';
+        //     const pCity = formData.get('primaryCity') || '';
+        //     const pState = formData.get('primaryState') || '';
+        //     const pZip = formData.get('primaryZip') || '';
+        //     const dAddress = formData.get('derivativeAddress') || '';
+        //     const dCity = formData.get('derivativeCity') || '';
+        //     const dState = formData.get('derivativeState') || '';
+        //     const dZip = formData.get('derivativeZip') || '';
+        //     const Anum = formData.get('aNumber') || '';
+        //     const priorityDate = formData.get('priorityDate') || '';
+        //     const ReceiptNumber = formData.get('receiptNumber') || '';
+        //     const USCISATTN = formData.get('uscisAttn') || '';
+        //     const USCISPOBOX = formData.get('uscisPoBox') || '';
+        //     const USCISCITY = formData.get('uscisCity') || '';
+        //     const USCISSTATE = formData.get('uscisState') || '';
+        //     const USCISzip = formData.get('uscisZip') || '';
 
-                const overleafUrl = 'https://www.overleaf.com/docs?' +
-                    snipUris.map(uri => `snip_uri[]=${encodeURIComponent(uri)}`).join('&') +
-                    '&' +
-                    snipNames.map(name => `snip_name[]=${encodeURIComponent(name)}`).join('&');
+        //     const texFiles = [
+        //         'https://raw.githubusercontent.com/abrarfaiyaz/i485_draft_skeleton/main/files/dervative_applicant_list_of_doc.tex',
+        //         'https://raw.githubusercontent.com/abrarfaiyaz/i485_draft_skeleton/main/files/evidence_p_applicant.tex',
+        //         'https://raw.githubusercontent.com/abrarfaiyaz/i485_draft_skeleton/main/files/evidences_d_applicant.tex',
+        //         'https://raw.githubusercontent.com/abrarfaiyaz/i485_draft_skeleton/main/files/main.tex',
+        //         'https://raw.githubusercontent.com/abrarfaiyaz/i485_draft_skeleton/main/files/principal_applicant_list_of_doc.tex'
+        //     ];
 
-                window.open(overleafUrl, '_blank');
-            } catch (error) {
-                console.error('Overleaf processing error:', error);
-                alert(`An error occurred while processing Overleaf: ${error.message}`);
-            }
-        }
+        //     try {
+        //         const variablesTex = `
+        //             \\newcommand{\\pApplicant}{${pApplicant}}
+        //             \\newcommand{\\pPhone}{${pPhone}}
+        //             \\newcommand{\\pEmail}{${pEmail}}
+        //             \\newcommand{\\pAddress}{${pAddress}}
+        //             \\newcommand{\\pCity}{${pCity}}
+        //             \\newcommand{\\pState}{${pState}}
+        //             \\newcommand{\\pZip}{${pZip}}
+        //             \\newcommand{\\Anum}{${Anum}}
+        //             \\newcommand{\\priorityDate}{${priorityDate}}
+        //             \\newcommand{\\ReceiptNumber}{${ReceiptNumber}}
+        //             \\newcommand{\\dApplicant}{${dApplicant}}
+        //             \\newcommand{\\dPhone}{${dPhone}}
+        //             \\newcommand{\\dEmail}{${dEmail}}
+        //             \\newcommand{\\dAddress}{${dAddress}}
+        //             \\newcommand{\\dCity}{${dCity}}
+        //             \\newcommand{\\dState}{${dState}}
+        //             \\newcommand{\\dZip}{${dZip}}      
+        //             \\newcommand{\\USCISATTN}{${USCISATTN}}
+        //             \\newcommand{\\USCISPOBOX}{${USCISPOBOX}}
+        //             \\newcommand{\\USCISCITY}{${USCISCITY}}
+        //             \\newcommand{\\USCISSTATE}{${USCISSTATE}}
+        //             \\newcommand{\\USCISzip}{${USCISzip}}
+        //             \\newcommand{\\USCISaddress}{U.S. Department of Homeland Security(USCIS)\\\\Attn: \\USCISATTN\\\\PO Box \\USCISPOBOX\\\\\\USCISCITY, \\USCISSTATE - \\USCISzip}
+        //         `;
+
+        //         const formDataUpload = new FormData();
+        //         const blob = new Blob([variablesTex], { type: 'text/plain' });
+        //         formDataUpload.append('file', blob, 'variables.tex');
+
+        //         const response = await fetch('https://file.io', {
+        //             method: 'POST',
+        //             body: formDataUpload
+        //         });
+
+        //         if (!response.ok) {
+        //             throw new Error('Failed to upload variables file.');
+        //         }
+
+        //         const data = await response.json();
+        //         const variablesTexUrl = data.link;
+
+        //         const snipUris = [variablesTexUrl, ...texFiles];
+        //         const snipNames = ['variables.tex', 'dervative_applicant_list_of_doc.tex', 'evidence_p_applicant.tex', 'evidences_d_applicant.tex', 'main.tex', 'principal_applicant_list_of_doc.tex'];
+
+        //         const overleafUrl = 'https://www.overleaf.com/docs?' +
+        //             snipUris.map(uri => `snip_uri[]=${encodeURIComponent(uri)}`).join('&') +
+        //             '&' +
+        //             snipNames.map(name => `snip_name[]=${encodeURIComponent(name)}`).join('&');
+
+        //         window.open(overleafUrl, '_blank');
+        //     } catch (error) {
+        //         console.error('Overleaf processing error:', error);
+        //         alert(`An error occurred while processing Overleaf: ${error.message}`);
+        //     }
+        // }
     </script>
 </body>
 </html>
