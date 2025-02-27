@@ -508,7 +508,7 @@
             uploadData.append("file", file);
 
             try {
-                const uploadResponse = await fetch("http://onlineapi.online/flyai-backend/api/v1/survey/upload", {
+                const uploadResponse = await fetch("http://api.flyai.online/flyai-backend/api/v1/survey/upload", {
                     method: "POST",
                     body: uploadData,
                 });
@@ -532,7 +532,7 @@
                     pdfUrl: uploadResult.fileId,
                 };
 
-                const res = await fetch("http://onlineapi.online/flyai-backend/api/v1/survey", {
+                const res = await fetch("http://api.flyai.online/flyai-backend/api/v1/survey", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(surveyData),
