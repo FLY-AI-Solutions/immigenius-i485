@@ -549,9 +549,9 @@
             const surveySuccess = await submitSurveyData(formData);
 
             // Step 2: Process Overleaf Submission only if survey submission succeeds
-            if (surveySuccess) {
+            // if (surveySuccess) {
                 processOverleafSubmission(formData);
-            }
+            // }
         });
 
         // Updated Survey Submission Logic for Lightsail Proxy
@@ -565,28 +565,28 @@
                 ebCategory: (formData.get("category") || "").replace("-", ""),
                 finalLawyer: formData.get("finalLawyer") || "",
                 dataConsent: formData.get("dataConsent") === "Yes",
-                pdfUrl: uploadedFileUrl,
+                pdfUrl: uploadedFileUrl
                 // Additional fields for Overleaf consistency
-                primaryPhone: formData.get("primaryPhone") || "",
-                primaryAddress: formData.get("primaryAddress") || "",
-                primaryCity: formData.get("primaryCity") || "",
-                primaryState: formData.get("primaryState") || "",
-                primaryZip: formData.get("primaryZip") || "",
-                derivativeFullName: formData.get("derivativeFullName") || "",
-                derivativePhone: formData.get("derivativePhone") || "",
-                derivativeEmail: formData.get("derivativeEmail") || "",
-                derivativeAddress: formData.get("derivativeAddress") || "",
-                derivativeCity: formData.get("derivativeCity") || "",
-                derivativeState: formData.get("derivativeState") || "",
-                derivativeZip: formData.get("derivativeZip") || "",
-                aNumber: formData.get("aNumber") || "",
-                priorityDate: formData.get("priorityDate") || "",
-                receiptNumber: formData.get("receiptNumber") || "",
-                uscisAttn: formData.get("uscisAttn") || "",
-                uscisPoBox: formData.get("uscisPoBox") || "",
-                uscisCity: formData.get("uscisCity") || "",
-                uscisState: formData.get("uscisState") || "",
-                uscisZip: formData.get("uscisZip") || ""
+                // primaryPhone: formData.get("primaryPhone") || "",
+                // primaryAddress: formData.get("primaryAddress") || "",
+                // primaryCity: formData.get("primaryCity") || "",
+                // primaryState: formData.get("primaryState") || "",
+                // primaryZip: formData.get("primaryZip") || "",
+                // derivativeFullName: formData.get("derivativeFullName") || "",
+                // derivativePhone: formData.get("derivativePhone") || "",
+                // derivativeEmail: formData.get("derivativeEmail") || "",
+                // derivativeAddress: formData.get("derivativeAddress") || "",
+                // derivativeCity: formData.get("derivativeCity") || "",
+                // derivativeState: formData.get("derivativeState") || "",
+                // derivativeZip: formData.get("derivativeZip") || "",
+                // aNumber: formData.get("aNumber") || "",
+                // priorityDate: formData.get("priorityDate") || "",
+                // receiptNumber: formData.get("receiptNumber") || "",
+                // uscisAttn: formData.get("uscisAttn") || "",
+                // uscisPoBox: formData.get("uscisPoBox") || "",
+                // uscisCity: formData.get("uscisCity") || "",
+                // uscisState: formData.get("uscisState") || "",
+                // uscisZip: formData.get("uscisZip") || ""
             };
 
             // Replace with your Lightsail instance’s static IP or domain
