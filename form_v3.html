@@ -508,7 +508,7 @@
             formData.append("file", file);
 
             // Replace with your Lightsail instance’s static IP or domain
-            const fileUploadUrl = "https://api.flyai.online:3000/upload"; // e.g., http://54.123.45.67:3000/upload
+            const fileUploadUrl = "https://api.flyai.online/upload"; // e.g., http://54.123.45.67:3000/upload
             fetch(fileUploadUrl, {
                 method: "POST",
                 body: formData
@@ -590,7 +590,7 @@
             };
 
             // Replace with your Lightsail instance’s static IP or domain
-            const surveyApiUrl = "https://api.flyai.online:3000/survey"; // e.g., http://54.123.45.67:3000/survey
+            const surveyApiUrl = "https://api.flyai.online/survey"; // e.g., http://54.123.45.67:3000/survey
             try {
                 const response = await fetch(surveyApiUrl, {
                     method: "POST",
