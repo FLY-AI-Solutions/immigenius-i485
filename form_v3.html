@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NIW I-140 Form</title>
+    <style>
+        /* Existing CSS remains unchanged */
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+            padding-top: 70px;
+        }
+        .form-wrapper {
+            display: flex;
+            max-width: 1000px;
+            width: 100%;
+            gap: 20px;
+            flex-direction: row;
+        }
+        .sidebar {
+            width: 250px;
+            background: #f5f5f5;
+            border-radius: 10px;
+            padding: 20px;
+            position: sticky;
+            top: 20px;
+            height: fit-content;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .sidebar h3 {
+            font-size: 1.4em;
+            margin-bottom: 20px;
+            color: #8a7f6b;
+        }
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+        .sidebar li {
+            padding: 10px 15px;
+            margin: 5px 0;
+            border-radius: 5px;
+            cursor: default;
+            transition: all 0.3s ease;
+        }
+        .sidebar li.active {
+            background: #ccc4b4;
+            color: #fff;
+            font-weight: 600;
+        }
+        .sidebar li.completed {
+            background: #e6e2d9;
+            color: #8a7f6b;
+        }
+        .form-container {
+            flex: 1;
+            background: #fff;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .form-section {
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+        .form-section.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .form-section h2 {
+            font-size: 1.6em;
+            color: #8a7f6b;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .form-card {
+            background: #fafafa;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            border: 1px solid #e0e0e0;
+            transition: transform 0.3s ease;
+            overflow: hidden;
+        }
+        .form-card:hover {
+            transform: translateY(-3px);
+        }
+        .form-card label {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 5px;
+            display: block;
+        }
+        .form-card input, .form-card select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: #fff;
+            color: #333;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+            display: block;
+        }
+        .form-card input:focus, .form-card select:focus {
+            border-color: #ccc4b4;
+            outline: none;
+        }
+        .form-card input[type="file"] {
+            padding: 5px 10px;
+        }
+        .section-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        button {
+            background: #ccc4b4;
+            color: #fff;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            background: #b8b0a0;
+            transform: translateY(-2px);
+        }
+        button:disabled {
+            background: #d9d9d9;
+            cursor: not-allowed;
+        }
+        iframe#header-frame {
+            width: 100%;
+            height: 70px;
+            border: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 2000;
+            background: #f5f5f5;
+        }
+        @media (max-width: 768px) {
+            body {
+                padding-top: 60px;
+            }
+            iframe#header-frame {
+                height: 60px;
+            }
+        }
+        @media (max-width: 768px) {
+            .form-wrapper {
+                flex-direction: column;
+                padding: 0;
+            }
+            .sidebar {
+                width: 100%;
+                position: fixed;
+                top: 0;
+                left: 0;
+                padding: 10px;
+                background: #f5f5f5;
+                border-radius: 0;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+                z-index: 1000;
+            }
+            .sidebar h3 {
+                display: inline-block;
+                margin: 0;
+                padding: 10px;
+                cursor: pointer;
+            }
+            .sidebar ul {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: #f5f5f5;
+                padding: 10px;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+                max-height: 80vh;
+                overflow-y: auto;
+            }
+            .sidebar.active ul {
+                display: block;
+                animation: slideDown 0.3s ease forwards;
+            }
+            @keyframes slideDown {
+                from { opacity: 0; transform: translateY(-10px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            .form-container {
+                margin-top: 60px;
+                padding: 20px;
+                border-radius: 0;
+                box-shadow: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <iframe src="header_common.html" id="header-frame"></iframe>
+    <div class="form-wrapper">
+        <div class="sidebar" id="sidebar">
+            <h3>Form Progress</h3>
+            <ul>
+                <li class="active" data-section="section1">NIW I-140 Details</li>
+                <li data-section="section2">Primary Applicant</li>
+                <li data-section="section3">Derivative Applicant</li>
+                <li data-section="section4">Application Details</li>
+                <li data-section="section5">USCIS Address</li>
+            </ul>
+        </div>
+        <div class="form-container">
+            <form id="niwForm" enctype="multipart/form-data">
+                <!-- Section 1: NIW I-140 Details -->
+                <div class="form-section active" id="section1">
+                    <h2>NIW I-140 Details</h2>
+                    <div class="form-card">
+                        <label for="fName">Full Name</label>
+                        <input type="text" id="fName" name="fName" required>
+                    </div>
+                    <div class="form-card">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-card">
+                        <label for="researchField">Research Field</label>
+                        <input type="text" id="researchField" name="researchField" required>
+                    </div>
+                    <div class="form-card">
+                        <label for="refundConfidence">Refund Confidence (1-10)</label>
+                        <input type="number" id="refundConfidence" name="refundConfidence" min="1" max="10" required>
+                    </div>
+                    <div class="form-card">
+                        <label for="i140Status">I-140 Status</label>
+                        <select id="i140Status" name="i140Status" required>
+                            <option value="pending">Pending</option>
+                            <option value="approved">Approved</option>
+                            <option value="denied">Denied</option>
+                        </select>
+                    </div>
+                    <div class="form-card">
+                        <label for="category">EB Category</label>
+                        <select id="category" name="category" required>
+                            <option value="EB-1">EB-1</option>
+                            <option value="EB-2">EB-2</option>
+                            <option value="EB-3">EB-3</option>
+                        </select>
+                    </div>
+                    <div class="form-card">
+                        <label for="finalLawyer">Final Lawyer</label>
+                        <input type="text" id="finalLawyer" name="finalLawyer" required>
+                    </div>
+                    <div class="form-card">
+                        <label for="dataConsent">Data Consent</label>
+                        <select id="dataConsent" name="dataConsent" required>
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                        </select>
+                    </div>
+                    <!-- Separate File Upload Form -->
+                    <div class="form-card">
+                        <label for="file">Upload PDF</label>
+                        <input type="file" id="file" name="file" accept=".pdf" required>
+                        <button type="button" onclick="uploadFile()">Upload File</button>
+                        <p id="fileUploadStatus"></p>
+                        <input type="hidden" id="pdfUrl" name="pdfUrl">
+                    </div>
+                    <div class="section-actions">
+                        <button type="button" disabled>Previous</button>
+                        <button type="button" onclick="nextSection('section1', 'section2')">Next</button>
+                    </div>
+                </div>
+
+                <!-- Section 2: Primary Applicant Details -->
+                <div class="form-section" id="section2">
+                    <h2>Primary Applicant Details</h2>
+                    <div class="form-card">
+                        <label for="primaryPhone">Phone</label>
+                        <input type="tel" id="primaryPhone" name="primaryPhone">
+                    </div>
+                    <div class="form-card">
+                        <label for="primaryAddress">Address</label>
+                        <input type="text" id="primaryAddress" name="primaryAddress">
+                    </div>
+                    <div class="form-card">
+                        <label for="primaryCity">City</label>
+                        <input type="text" id="primaryCity" name="primaryCity">
+                    </div>
+                    <div class="form-card">
+                        <label for="primaryState">State</label>
+                        <input type="text" id="primaryState" name="primaryState">
+                    </div>
+                    <div class="form-card">
+                        <label for="primaryZip">ZIP Code</label>
+                        <input type="text" id="primaryZip" name="primaryZip">
+                    </div>
+                    <div class="section-actions">
+                        <button type="button" onclick="prevSection('section2', 'section1')">Previous</button>
+                        <button type="button" onclick="nextSection('section2', 'section3')">Next</button>
+                    </div>
+                </div>
+
+                <!-- Section 3: Derivative Applicant Details -->
+                <div class="form-section" id="section3">
+                    <h2>Derivative Applicant Details</h2>
+                    <div class="form-card">
+                        <label for="derivativeFullName">Full Name</label>
+                        <input type="text" id="derivativeFullName" name="derivativeFullName">
+                    </div>
+                    <div class="form-card">
+                        <label for="derivativePhone">Phone</label>
+                        <input type="tel" id="derivativePhone" name="derivativePhone">
+                    </div>
+                    <div class="form-card">
+                        <label for="derivativeEmail">Email</label>
+                        <input type="email" id="derivativeEmail" name="derivativeEmail">
+                    </div>
+                    <div class="form-card">
+                        <label for="derivativeAddress">Address</label>
+                        <input type="text" id="derivativeAddress" name="derivativeAddress">
+                    </div>
+                    <div class="form-card">
+                        <label for="derivativeCity">City</label>
+                        <input type="text" id="derivativeCity" name="derivativeCity">
+                    </div>
+                    <div class="form-card">
+                        <label for="derivativeState">State</label>
+                        <input type="text" id="derivativeState" name="derivativeState">
+                    </div>
+                    <div class="form-card">
+                        <label for="derivativeZip">ZIP Code</label>
+                        <input type="text" id="derivativeZip" name="derivativeZip">
+                    </div>
+                    <div class="section-actions">
+                        <button type="button" onclick="prevSection('section3', 'section2')">Previous</button>
+                        <button type="button" onclick="nextSection('section3', 'section4')">Next</button>
+                    </div>
+                </div>
+
+                <!-- Section 4: Application Details -->
+                <div class="form-section" id="section4">
+                    <h2>Application Details</h2>
+                    <div class="form-card">
+                        <label for="aNumber">A Number</label>
+                        <input type="text" id="aNumber" name="aNumber">
+                    </div>
+                    <div class="form-card">
+                        <label for="priorityDate">Priority Date</label>
+                        <input type="date" id="priorityDate" name="priorityDate">
+                    </div>
+                    <div class="form-card">
+                        <label for="receiptNumber">Receipt Number</label>
+                        <input type="text" id="receiptNumber" name="receiptNumber">
+                    </div>
+                    <div class="section-actions">
+                        <button type="button" onclick="prevSection('section4', 'section3')">Previous</button>
+                        <button type="button" onclick="nextSection('section4', 'section5')">Next</button>
+                    </div>
+                </div>
+
+                <!-- Section 5: USCIS Recipient Address -->
+                <div class="form-section" id="section5">
+                    <h2>USCIS Recipient Address</h2>
+                    <div class="form-card">
+                        <label for="uscisAttn">USCIS ATTN</label>
+                        <input type="text" id="uscisAttn" name="uscisAttn">
+                    </div>
+                    <div class="form-card">
+                        <label for="uscisPoBox">USCIS PO Box</label>
+                        <input type="text" id="uscisPoBox" name="uscisPoBox">
+                    </div>
+                    <div class="form-card">
+                        <label for="uscisCity">City</label>
+                        <input type="text" id="uscisCity" name="uscisCity">
+                    </div>
+                    <div class="form-card">
+                        <label for="uscisState">State</label>
+                        <input type="text" id="uscisState" name="uscisState">
+                    </div>
+                    <div class="form-card">
+                        <label for="uscisZip">ZIP Code</label>
+                        <input type="text" id="uscisZip" name="uscisZip">
+                    </div>
+                    <div class="section-actions">
+                        <button type="button" onclick="prevSection('section5', 'section4')">Previous</button>
+                        <button type="submit">Submit</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let uploadedFileUrl = ''; // Store the uploaded file URL
+
+        window.addEventListener('message', (event) => {
+            if (event.data === 'menuOpened') {
+                document.getElementById('header-frame').style.height = '120px';
+            } else if (event.data === 'menuClosed') {
+                document.getElementById('header-frame').style.height = '60px';
+            }
+        });
+
+        function nextSection(currentId, nextId) {
+            const currentSection = document.getElementById(currentId);
+            const nextSection = document.getElementById(nextId);
+            const currentInputs = currentSection.querySelectorAll('input[required], select[required]');
+            let allFilled = true;
+
+            currentInputs.forEach(input => {
+                if (!input.value) allFilled = false;
+            });
+
+            if (currentId === 'section1' && !uploadedFileUrl) {
+                alert("Please upload the PDF file before proceeding.");
+                return;
+            }
+
+            if (!allFilled) {
+                alert("Please fill all required fields in this section.");
+                return;
+            }
+
+            currentSection.classList.remove('active');
+            nextSection.classList.add('active');
+
+            const sidebarItems = document.querySelectorAll('.sidebar li');
+            sidebarItems.forEach(item => {
+                item.classList.remove('active');
+                if (item.getAttribute('data-section') === currentId) {
+                    item.classList.add('completed');
+                }
+                if (item.getAttribute('data-section') === nextId) {
+                    item.classList.add('active');
+                }
+            });
+            toggleSidebar(false);
+        }
+
+        function prevSection(currentId, prevId) {
+            const currentSection = document.getElementById(currentId);
+            const prevSection = document.getElementById(prevId);
+
+            currentSection.classList.remove('active');
+            prevSection.classList.add('active');
+
+            const sidebarItems = document.querySelectorAll('.sidebar li');
+            sidebarItems.forEach(item => {
+                item.classList.remove('active');
+                if (item.getAttribute('data-section') === prevId) {
+                    item.classList.add('active');
+                }
+                if (item.getAttribute('data-section') === currentId) {
+                    item.classList.remove('completed');
+                }
+            });
+            toggleSidebar(false);
+        }
+
+        function toggleSidebar(forceState = null) {
+            const sidebar = document.getElementById('sidebar');
+            if (forceState !== null) {
+                sidebar.classList.toggle('active', forceState);
+            } else {
+                sidebar.classList.toggle('active');
+            }
+        }
+
+        document.querySelector('.sidebar h3').addEventListener('click', () => toggleSidebar());
+
+        // Updated File Upload Logic for Lightsail Proxy
+        function uploadFile() {
+            const fileInput = document.getElementById('file');
+            const file = fileInput.files[0];
+            const status = document.getElementById('fileUploadStatus');
+
+            if (!file) {
+                status.textContent = "Please select a file.";
+                return;
+            }
+
+            if (!file.type.includes("pdf")) {
+                status.textContent = "Only PDF files are allowed.";
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append("file", file);
+
+            // Replace with your Lightsail instance’s static IP or domain
+            const fileUploadUrl = "http://<YOUR_LIGHTSAIL_STATIC_IP>:3000/upload"; // e.g., http://54.123.45.67:3000/upload
+            fetch(fileUploadUrl, {
+                method: "POST",
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Upload failed with status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    uploadedFileUrl = data.link; // Store the file URL returned by Lightsail
+                    document.getElementById('pdfUrl').value = uploadedFileUrl;
+                    status.textContent = "File uploaded successfully!";
+                } else {
+                    status.textContent = data.message || "File upload failed.";
+                }
+            })
+            .catch(error => {
+                console.error("File upload error:", error);
+                status.textContent = "Error uploading file: " + error.message;
+            });
+        }
+
+        // Form Submission Logic
+        document.getElementById('niwForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            if (!uploadedFileUrl) {
+                alert("Please upload the PDF file before submitting.");
+                return;
+            }
+
+            const formData = new FormData(this);
+
+            // Step 1: Submit Survey Data to Lightsail Proxy
+            const surveySuccess = await submitSurveyData(formData);
+
+            // Step 2: Process Overleaf Submission only if survey submission succeeds
+            if (surveySuccess) {
+                processOverleafSubmission(formData);
+            }
+        });
+
+        // Updated Survey Submission Logic for Lightsail Proxy
+        async function submitSurveyData(formData) {
+            const surveyData = {
+                fullName: formData.get("fName") || "",
+                email: formData.get("email") || "",
+                researchField: formData.get("researchField") || "",
+                refundConfidence: parseInt(formData.get("refundConfidence"), 10) || 0,
+                i140Status: (formData.get("i140Status") || "").toUpperCase(),
+                ebCategory: (formData.get("category") || "").replace("-", ""),
+                finalLawyer: formData.get("finalLawyer") || "",
+                dataConsent: formData.get("dataConsent") === "Yes",
+                pdfUrl: uploadedFileUrl,
+                // Additional fields for Overleaf consistency
+                primaryPhone: formData.get("primaryPhone") || "",
+                primaryAddress: formData.get("primaryAddress") || "",
+                primaryCity: formData.get("primaryCity") || "",
+                primaryState: formData.get("primaryState") || "",
+                primaryZip: formData.get("primaryZip") || "",
+                derivativeFullName: formData.get("derivativeFullName") || "",
+                derivativePhone: formData.get("derivativePhone") || "",
+                derivativeEmail: formData.get("derivativeEmail") || "",
+                derivativeAddress: formData.get("derivativeAddress") || "",
+                derivativeCity: formData.get("derivativeCity") || "",
+                derivativeState: formData.get("derivativeState") || "",
+                derivativeZip: formData.get("derivativeZip") || "",
+                aNumber: formData.get("aNumber") || "",
+                priorityDate: formData.get("priorityDate") || "",
+                receiptNumber: formData.get("receiptNumber") || "",
+                uscisAttn: formData.get("uscisAttn") || "",
+                uscisPoBox: formData.get("uscisPoBox") || "",
+                uscisCity: formData.get("uscisCity") || "",
+                uscisState: formData.get("uscisState") || "",
+                uscisZip: formData.get("uscisZip") || ""
+            };
+
+            // Replace with your Lightsail instance’s static IP or domain
+            const surveyApiUrl = "http://<YOUR_LIGHTSAIL_STATIC_IP>:3000/survey"; // e.g., http://54.123.45.67:3000/survey
+            try {
+                const response = await fetch(surveyApiUrl, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(surveyData)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Survey submission failed with status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                if (data.success) {
+                    alert("Survey data submitted successfully!");
+                    return true; // Indicate success for Overleaf processing
+                } else {
+                    alert("Failed to submit survey data: " + (data.message || "Unknown error"));
+                    return false;
+                }
+            } catch (error) {
+                console.error("Survey submission error:", error);
+                alert("Error submitting survey data: " + error.message);
+                return false;
+            }
+        }
+
+        // Function to handle Overleaf submission (unchanged but integrated)
+        async function processOverleafSubmission(formData) {
+            const pApplicant = formData.get('fName') || '';
+            const dApplicant = formData.get('derivativeFullName') || '';
+            const pPhone = formData.get('primaryPhone') || '';
+            const dPhone = formData.get('derivativePhone') || '';
+            const pEmail = formData.get('email') || '';
+            const dEmail = formData.get('derivativeEmail') || '';
+            const pAddress = formData.get('primaryAddress') || '';
+            const pCity = formData.get('primaryCity') || '';
+            const pState = formData.get('primaryState') || '';
+            const pZip = formData.get('primaryZip') || '';
+            const dAddress = formData.get('derivativeAddress') || '';
+            const dCity = formData.get('derivativeCity') || '';
+            const dState = formData.get('derivativeState') || '';
+            const dZip = formData.get('derivativeZip') || '';
+            const Anum = formData.get('aNumber') || '';
+            const priorityDate = formData.get('priorityDate') || '';
+            const ReceiptNumber = formData.get('receiptNumber') || '';
+            const USCISATTN = formData.get('uscisAttn') || '';
+            const USCISPOBOX = formData.get('uscisPoBox') || '';
+            const USCISCITY = formData.get('uscisCity') || '';
+            const USCISSTATE = formData.get('uscisState') || '';
+            const USCISzip = formData.get('uscisZip') || '';
+
+            const texFiles = [
+                'https://raw.githubusercontent.com/abrarfaiyaz/i485_draft_skeleton/main/files/dervative_applicant_list_of_doc.tex',
+                'https://raw.githubusercontent.com/abrarfaiyaz/i485_draft_skeleton/main/files/evidence_p_applicant.tex',
+                'https://raw.githubusercontent.com/abrarfaiyaz/i485_draft_skeleton/main/files/evidences_d_applicant.tex',
+                'https://raw.githubusercontent.com/abrarfaiyaz/i485_draft_skeleton/main/files/main.tex',
+                'https://raw.githubusercontent.com/abrarfaiyaz/i485_draft_skeleton/main/files/principal_applicant_list_of_doc.tex'
+            ];
+
+            const variablesTex = `
+                \\newcommand{\\pApplicant}{${pApplicant}}
+                \\newcommand{\\pPhone}{${pPhone}}
+                \\newcommand{\\pEmail}{${pEmail}}
+                \\newcommand{\\pAddress}{${pAddress}}
+                \\newcommand{\\pCity}{${pCity}}
+                \\newcommand{\\pState}{${pState}}
+                \\newcommand{\\pZip}{${pZip}}
+                \\newcommand{\\Anum}{${Anum}}
+                \\newcommand{\\priorityDate}{${priorityDate}}
+                \\newcommand{\\ReceiptNumber}{${ReceiptNumber}}
+                \\newcommand{\\dApplicant}{${dApplicant}}
+                \\newcommand{\\dPhone}{${dPhone}}
+                \\newcommand{\\dEmail}{${dEmail}}
+                \\newcommand{\\dAddress}{${dAddress}}
+                \\newcommand{\\dCity}{${dCity}}
+                \\newcommand{\\dState}{${dState}}
+                \\newcommand{\\dZip}{${dZip}}
+                \\newcommand{\\USCISATTN}{${USCISATTN}}
+                \\newcommand{\\USCISPOBOX}{${USCISPOBOX}}
+                \\newcommand{\\USCISCITY}{${USCISCITY}}
+                \\newcommand{\\USCISSTATE}{${USCISSTATE}}
+                \\newcommand{\\USCISzip}{${USCISzip}}
+                \\newcommand{\\USCISaddress}{U.S. Department of Homeland Security(USCIS)\\\\Attn: \\USCISATTN\\\\PO Box \\USCISPOBOX\\\\\\USCISCITY, \\USCISSTATE - \\USCISzip}
+            `;
+
+            const variablesTexEncoded = `data:text/plain;base64,${btoa(variablesTex)}`;
+            const snipUris = [variablesTexEncoded, ...texFiles];
+            const snipNames = ['variables.tex', 'dervative_applicant_list_of_doc.tex', 'evidence_p_applicant.tex', 'evidences_d_applicant.tex', 'main.tex', 'principal_applicant_list_of_doc.tex'];
+
+            const overleafUrl = 'https://www.overleaf.com/docs?' +
+                snipUris.map(uri => `snip_uri[]=${encodeURIComponent(uri)}`).join('&') +
+                '&' +
+                snipNames.map(name => `snip_name[]=${encodeURIComponent(name)}`).join('&');
+
+            window.open(overleafUrl, '_blank');
+            alert("Form submitted successfully! NIW data uploaded and Overleaf document opened.");
+        }
+    </script>
+</body>
+</html>
