@@ -575,13 +575,13 @@
             popup.className = 'popup-overlay';
             popup.innerHTML = `
                 <div class="popup-card">
-                    <h3>Choose Submission Platform</h3>
+                    <h3>Choose Your Preferred Editor</h3>
                     <div class="options-container">
                         <button class="option-btn" id="immigeniusBtn">
-                            <img src="immigenius_logo_transparent.png" alt="Immigenius" class="platform-logo">
+                            <img src="imgs/immigenius_logo_transparent.png" alt="Immigenius" class="platform-logo">
                         </button>
                         <button class="option-btn" id="overleafBtn">
-                            <img src="overleaf-o-logo-primary.jpg" alt="Overleaf" class="platform-logo">
+                            <img src="imgs/overleaf-o-logo-primary.jpg" alt="Overleaf" class="platform-logo">
                         </button>
                     </div>
                 </div>
@@ -898,7 +898,7 @@
                 snipNames.map(name => `snip_name[]=${encodeURIComponent(name)}`).join('&');
 
             window.open(overleafUrl, '_blank');
-            alert("Form submitted successfully! NIW data uploaded and Overleaf document opened.");
+            console.log("Form submitted successfully! NIW data uploaded and Overleaf document opened.");
         }
     </script>
 </body>
