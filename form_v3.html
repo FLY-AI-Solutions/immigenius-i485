@@ -535,24 +535,182 @@
         }
 
         // Form Submission Logic
+        // document.getElementById('niwForm').addEventListener('submit', async function(e) {
+        //     e.preventDefault();
+
+        //     if (!uploadedFileUrl) {
+        //         alert("Please upload the PDF file before submitting.");
+        //         return;
+        //     }
+
+        //     const formData = new FormData(this);
+
+        //     // Step 1: Submit Survey Data to Lightsail Proxy
+        //     const surveySuccess = await submitSurveyData(formData);
+
+        //     // Step 2: Process Overleaf Submission only if survey submission succeeds
+        //     // if (surveySuccess) {
+        //         processOverleafSubmission(formData);
+        //     // }
+        // });
+        // Form Submission Logic remains the same
         document.getElementById('niwForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-
+        
             if (!uploadedFileUrl) {
                 alert("Please upload the PDF file before submitting.");
                 return;
             }
-
+        
             const formData = new FormData(this);
-
-            // Step 1: Submit Survey Data to Lightsail Proxy
             const surveySuccess = await submitSurveyData(formData);
-
-            // Step 2: Process Overleaf Submission only if survey submission succeeds
+        
             // if (surveySuccess) {
-                processOverleafSubmission(formData);
+                showSubmissionOptions(formData);
             // }
         });
+
+        function showSubmissionOptions(formData) {
+            const popup = document.createElement('div');
+            popup.className = 'popup-overlay';
+            popup.innerHTML = `
+                <div class="popup-card">
+                    <h3>Choose Submission Platform</h3>
+                    <div class="options-container">
+                        <button class="option-btn" id="immigeniusBtn">
+                            <img src="immigenius_logo_short.png" alt="Immigenius" class="platform-logo">
+                        </button>
+                        <button class="option-btn" id="overleafBtn">
+                            <img src="overleaf.png" alt="Overleaf" class="platform-logo">
+                        </button>
+                    </div>
+                </div>
+            `;
+        
+            document.body.appendChild(popup);
+        
+            document.getElementById('immigeniusBtn').addEventListener('click', () => {
+                window.location.href = 'https://dummylink.com';
+                // popup.remove();
+            });
+        
+            document.getElementById('overleafBtn').addEventListener('click', () => {
+                processOverleafSubmission(formData);
+                popup.remove();
+            });
+        }
+        
+        // Updated CSS with mobile responsiveness
+        const styles = `
+            .popup-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 1000;
+                animation: fadeIn 0.3s ease-in;
+            }
+        
+            .popup-card {
+                background: white;
+                padding: 20px;
+                border-radius: 10px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                width: 90%;
+                max-width: 300px;
+                text-align: center;
+                animation: slideUp 0.3s ease-out;
+            }
+        
+            .popup-card h3 {
+                margin: 0 0 15px 0;
+                font-size: 1.2em;
+            }
+        
+            .options-container {
+                display: flex;
+                justify-content: space-around;
+                align-items: center;
+                margin-top: 20px;
+                flex-wrap: wrap;
+                gap: 15px;
+            }
+        
+            .option-btn {
+                background: none;
+                border: none;
+                cursor: pointer;
+                padding: 10px;
+                transition: transform 0.2s ease;
+                flex: 1;
+                min-width: 100px;
+            }
+        
+            .option-btn:hover {
+                transform: scale(1.1);
+            }
+        
+            .platform-logo {
+                width: 100%;
+                max-width: 80px;
+                height: auto;
+                display: block;
+                margin: 0 auto;
+            }
+        
+            @keyframes fadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+        
+            @keyframes slideUp {
+                from { 
+                    transform: translateY(50px);
+                    opacity: 0;
+                }
+                to { 
+                    transform: translateY(0);
+                    opacity: 1;
+                }
+            }
+        
+            /* Mobile-specific adjustments */
+            @media (max-width: 480px) {
+                .popup-card {
+                    padding: 15px;
+                    max-width: 280px;
+                }
+        
+                .popup-card h3 {
+                    font-size: 1em;
+                }
+        
+                .options-container {
+                    flex-direction: column;
+                    gap: 20px;
+                }
+        
+                .option-btn {
+                    width: 100%;
+                    max-width: 120px;
+                }
+        
+                .platform-logo {
+                    max-width: 60px;
+                }
+            }
+        `;
+        
+        const styleSheet = document.createElement('style');
+        styleSheet.textContent = styles;
+        document.head.appendChild(styleSheet);
+
+        
         async function submitSurveyData(formData) {
             const surveyData = {
                 id: 1073741824, // Hardcoded as per your example; adjust if it should be dynamic
@@ -561,7 +719,7 @@
                 researchField: formData.get("researchField") || "",
                 refundConfidence: parseInt(formData.get("refundConfidence"), 10) || 0,
                 i140Status: (formData.get("i140Status") || "").toUpperCase(),
-                ebCategory: (formData.get("category") || "").replace("-", ""),
+                ebCategory: ((formData.get("category") || "").replace("-", "")).toUpperCase(),
                 finalLawyer: formData.get("finalLawyer") || "",
                 dataConsent: formData.get("dataConsent") === "Yes",
                 pdfUrl: uploadedFileUrl,
