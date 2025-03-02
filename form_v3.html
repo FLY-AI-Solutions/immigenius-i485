@@ -553,7 +553,7 @@
         //         processOverleafSubmission(formData);
         //     // }
         // });
-        // Form Submission Logic remains the same
+        // JavaScript remains the same
         document.getElementById('niwForm').addEventListener('submit', async function(e) {
             e.preventDefault();
         
@@ -569,7 +569,7 @@
                 showSubmissionOptions(formData);
             // }
         });
-
+        
         function showSubmissionOptions(formData) {
             const popup = document.createElement('div');
             popup.className = 'popup-overlay';
@@ -578,10 +578,10 @@
                     <h3>Choose Submission Platform</h3>
                     <div class="options-container">
                         <button class="option-btn" id="immigeniusBtn">
-                            <img src="immigenius_logo_short.png" alt="Immigenius" class="platform-logo">
+                            <img src="immigenius_logo_transparent.png" alt="Immigenius" class="platform-logo">
                         </button>
                         <button class="option-btn" id="overleafBtn">
-                            <img src="overleaf.png" alt="Overleaf" class="platform-logo">
+                            <img src="overleaf-o-logo-primary.jpg" alt="Overleaf" class="platform-logo">
                         </button>
                     </div>
                 </div>
@@ -590,7 +590,7 @@
             document.body.appendChild(popup);
         
             document.getElementById('immigeniusBtn').addEventListener('click', () => {
-                window.location.href = 'https://dummylink.com';
+                // window.location.href = 'https://dummylink.com';
                 // popup.remove();
             });
         
@@ -600,7 +600,7 @@
             });
         }
         
-        // Updated CSS with mobile responsiveness
+        // Updated CSS with frosted glass effect
         const styles = `
             .popup-overlay {
                 position: fixed;
@@ -617,10 +617,13 @@
             }
         
             .popup-card {
-                background: white;
+                background: rgba(255, 255, 255, 0.1); /* Semi-transparent white */
+                backdrop-filter: blur(10px); /* Strong blur effect */
+                -webkit-backdrop-filter: blur(10px); /* Safari support */
                 padding: 20px;
-                border-radius: 10px;
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                border-radius: 15px;
+                border: 1px solid rgba(255, 255, 255, 0.2); /* Subtle border */
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
                 width: 90%;
                 max-width: 300px;
                 text-align: center;
@@ -630,6 +633,7 @@
             .popup-card h3 {
                 margin: 0 0 15px 0;
                 font-size: 1.2em;
+                color: white; /* Better contrast on glass */
             }
         
             .options-container {
@@ -642,17 +646,21 @@
             }
         
             .option-btn {
-                background: none;
-                border: none;
+                background: rgba(255, 255, 255, 0.15); /* Glass-like button background */
+                backdrop-filter: blur(8px); /* Additional blur for buttons */
+                -webkit-backdrop-filter: blur(8px);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                border-radius: 10px;
                 cursor: pointer;
                 padding: 10px;
-                transition: transform 0.2s ease;
+                transition: all 0.3s ease;
                 flex: 1;
                 min-width: 100px;
             }
         
             .option-btn:hover {
                 transform: scale(1.1);
+                background: rgba(255, 255, 255, 0.25); /* Slightly brighter on hover */
             }
         
             .platform-logo {
@@ -679,7 +687,6 @@
                 }
             }
         
-            /* Mobile-specific adjustments */
             @media (max-width: 480px) {
                 .popup-card {
                     padding: 15px;
@@ -745,15 +752,17 @@
         
                 const data = await response.json();
                 if (data.success) {
-                    alert("Survey data submitted successfully!");
+                    // alert("Survey data submitted successfully!");
+                    console.log("Survey data submitted successfully!");
                     return true;
                 } else {
-                    alert("Failed to submit survey data: " + (data.message || "Unknown error"));
+                    // alert("Failed to submit survey data: " + (data.message || "Unknown error"));
+                    console.log("Survey data submitted successfully!");
                     return false;
                 }
             } catch (error) {
                 console.error("Survey submission error:", error);
-                alert("Error submitting survey data: " + error.message);
+                // alert("Error submitting survey data: " + error.message);
                 return false;
             }
         }
