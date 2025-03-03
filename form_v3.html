@@ -757,7 +757,7 @@
                     return true;
                 } else {
                     // alert("Failed to submit survey data: " + (data.message || "Unknown error"));
-                    console.log("Survey data submitted successfully!");
+                    console.error("Failed to submit survey data: " + (data.message || "Unknown error"));
                     return false;
                 }
             } catch (error) {
