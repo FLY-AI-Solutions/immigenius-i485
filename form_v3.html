@@ -720,7 +720,7 @@
         
         async function submitSurveyData(formData) {
             const surveyData = {
-                id: 1073741824, // Hardcoded as per your example; adjust if it should be dynamic
+                //id: 1073741824, // Hardcoded as per your example; adjust if it should be dynamic
                 email: formData.get("email") || "",
                 fullName: formData.get("fName") || "",
                 researchField: formData.get("researchField") || "",
@@ -729,8 +729,8 @@
                 ebCategory: ((formData.get("category") || "").replace("-", "")).toUpperCase(),
                 finalLawyer: formData.get("finalLawyer") || "",
                 dataConsent: formData.get("dataConsent") === "Yes",
-                pdfUrl: uploadedFileUrl,
-                createdAt: new Date().toISOString() // Generates current timestamp in ISO format
+                pdfUrl: uploadedFileUrl
+                //createdAt: new Date().toISOString() // Generates current timestamp in ISO format
             };
         
             console.log("Survey Data being sent:", JSON.stringify(surveyData, null, 2)); // Log payload for debugging
