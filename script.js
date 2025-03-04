@@ -68,7 +68,7 @@ document.getElementById('contactForm').addEventListener('submit', function(e) {
     }
 
     // External API URL (ensure this is your actual server endpoint)
-    const serverUrl = 'http://api.flyai.online/api/save-contact';
+    const serverUrl = 'http://api.flyai.online:3000/api/save-contact';
 
     fetch(serverUrl, {
         method: 'POST',
