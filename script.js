@@ -38,9 +38,13 @@ function createGraphBackground() {
     }
 }
 
-createGraphBackground();
+// Initialize graph background when the page loads
+document.addEventListener('DOMContentLoaded', () => {
+    createGraphBackground();
+});
 
-document.getElementById('contactForm').addEventListener('submit', async (e) => {
+// Handle form submission
+document.getElementById('contactForm').addEventListener('submit', function(e) {
     e.preventDefault();
     
     const contactInput = document.getElementById('contactInput').value.trim();
@@ -59,22 +63,28 @@ document.getElementById('contactForm').addEventListener('submit', async (e) => {
     } else {
         messageDiv.textContent = 'Please enter a valid email or phone';
         messageDiv.classList.add('show');
+        setTimeout(() => messageDiv.classList.remove('show'), 3000);
         return;
     }
 
-    try {
-        const serverUrl = 'http://api.flyai.online/api/save-contact'; 
-        const response = await fetch(serverUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data),
-        });
+    // External API URL (ensure this is your actual server endpoint)
+    const serverUrl = 'http://api.flyai.online/api/save-contact';
 
-        const result = await response.json();
-        
-        if (response.ok) {
+    fetch(serverUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(result => {
+        if (result.success) {
             // Show confirmation animation
             confirmationOverlay.classList.add('show');
             setTimeout(() => {
@@ -83,14 +93,17 @@ document.getElementById('contactForm').addEventListener('submit', async (e) => {
                 messageDiv.classList.add('show');
                 document.getElementById('contactForm').reset();
                 setTimeout(() => messageDiv.classList.remove('show'), 3000);
-            }, 2000); // Hide confirmation after 2 seconds
+            }, 2000);
         } else {
             messageDiv.textContent = result.error || 'Something went wrong';
             messageDiv.classList.add('show');
+            setTimeout(() => messageDiv.classList.remove('show'), 3000);
         }
-    } catch (error) {
-        messageDiv.textContent = 'Error connecting to server';
+    })
+    .catch(error => {
+        messageDiv.textContent = 'Error connecting to server. Please try again later.';
         messageDiv.classList.add('show');
-        console.error('Error:', error);
-    }
+        setTimeout(() => messageDiv.classList.remove('show'), 3000);
+        console.error('Fetch error:', error);
+    });
 });
