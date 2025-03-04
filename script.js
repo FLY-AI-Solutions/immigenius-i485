@@ -63,7 +63,7 @@ document.getElementById('contactForm').addEventListener('submit', async (e) => {
     }
 
     try {
-        const serverUrl = 'http://api.flyai.online:3000/api/save-contact'; 
+        const serverUrl = 'http://api.flyai.online/api/save-contact'; 
         const response = await fetch(serverUrl, {
             method: 'POST',
             headers: {
