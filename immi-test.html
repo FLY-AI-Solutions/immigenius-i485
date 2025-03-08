@@ -360,20 +360,61 @@
 
             responseNodes.forEach((node, index) => {
                 const angle = (index / numResponses) * 2 * Math.PI;
-                const x = radius * Math.sin(angle);
-                const z = radius * Math.cos(angle);
-                node.x = x;
-                node.z = z;
+                const targetX = radius * Math.sin(angle);
+                const targetZ = radius * Math.cos(angle);
 
-                if (nodes[node.id]) {
-                    nodes[node.id].position.x = x;
-                    nodes[node.id].position.z = z;
-                }
+                const sphere = nodes[node.id];
+                if (sphere) {
+                    // Store target positions in graphData
+                    node.x = targetX;
+                    node.z = targetZ;
 
-                const edgeKey = `User->${node.id}`;
-                if (edges[edgeKey]) {
-                    edges[edgeKey].dispose();
-                    createEdge('User', node.id, graphData.edges.find(edge => edge.from === 'User' && edge.to === node.id).label);
+                    // Create animations for x and z coordinates
+                    const animationX = new BABYLON.Animation(
+                        "animX",
+                        "position.x",
+                        60, // Frame rate
+                        BABYLON.Animation.ANIMATIONTYPE_FLOAT,
+                        BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT
+                    );
+
+                    const animationZ = new BABYLON.Animation(
+                        "animZ",
+                        "position.z",
+                        60,
+                        BABYLON.Animation.ANIMATIONTYPE_FLOAT,
+                        BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT
+                    );
+
+                    // Define keyframes
+                    const keysX = [
+                        { frame: 0, value: sphere.position.x },
+                        { frame: 30, value: targetX }
+                    ];
+                    const keysZ = [
+                        { frame: 0, value: sphere.position.z },
+                        { frame: 30, value: targetZ }
+                    ];
+
+                    animationX.setKeys(keysX);
+                    animationZ.setKeys(keysZ);
+
+                    // Add easing for smooth motion
+                    const easingFunction = new BABYLON.CircleEase();
+                    easingFunction.setEasingMode(BABYLON.EasingFunction.EASINGMODE_EASEINOUT);
+                    animationX.setEasingFunction(easingFunction);
+                    animationZ.setEasingFunction(easingFunction);
+
+                    // Apply animations to the sphere
+                    sphere.animations = [animationX, animationZ];
+                    scene.beginAnimation(sphere, 0, 30, false, 1, () => {
+                        // Update edges after animation completes
+                        const edgeKey = `User->${node.id}`;
+                        if (edges[edgeKey]) {
+                            edges[edgeKey].dispose();
+                            createEdge('User', node.id, graphData.edges.find(edge => edge.from === 'User' && edge.to === node.id).label);
+                        }
+                    });
                 }
             });
         }
@@ -503,11 +544,10 @@
         }
 
         function toggleChat(event) {
-            event.stopPropagation(); // Prevent drag from triggering on toggle click
+            event.stopPropagation();
             chatContainer.classList.toggle('collapsed');
             const isCollapsed = chatContainer.classList.contains('collapsed');
             if (!isCollapsed) {
-                // When opening, ensure it’s centered if no previous position
                 if (!chatContainer.style.left || !chatContainer.style.top) {
                     currentX = window.innerWidth / 2 - 200;
                     currentY = window.innerHeight / 2 - 300;
@@ -537,7 +577,7 @@
         document.addEventListener('touchend', stopDragging);
 
         function startDragging(e) {
-            if (e.target.classList.contains('toggle-btn')) return; // Prevent dragging if clicking toggle button
+            if (e.target.classList.contains('toggle-btn')) return;
 
             isDragging = true;
             const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
