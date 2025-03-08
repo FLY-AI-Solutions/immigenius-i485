@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iMMi-1485 Chat with 3D Graph</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: #f5f5f5;
+            min-height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            touch-action: none;
+        }
+
+        #renderCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .chat-container {
+            width: 90vw;
+            max-width: 400px;
+            height: 85vh;
+            max-height: 600px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(12px);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(204, 196, 180, 0.4);
+            z-index: 2;
+            position: absolute;
+        }
+
+        .chat-container.collapsed {
+            width: 90px;
+            height: 35px;
+            border-radius: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .chat-container:not(.collapsed) {
+                width: 95vw;
+                height: 90vh;
+            }
+            .chat-container.collapsed {
+                width: 80px;
+                height: 30px;
+            }
+        }
+
+        .chat-header {
+            padding: 12px;
+            background: linear-gradient(135deg, #ccc4b4, #b8b0a0);
+            color: #fff;
+            text-align: center;
+            font-size: clamp(16px, 4vw, 18px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            position: relative;
+            cursor: move;
+        }
+
+        .chat-header .toggle-btn {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: clamp(18px, 5vw, 20px);
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .chat-body {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background: transparent;
+        }
+
+        .chat-container.collapsed .chat-body,
+        .chat-container.collapsed .chat-input {
+            display: none;
+        }
+
+        .message {
+            max-width: 75%;
+            padding: 10px 15px;
+            border-radius: 18px;
+            animation: slideIn 0.3s ease;
+            font-size: clamp(12px, 3vw, 14px);
+            line-height: 1.4;
+            background: rgba(255, 255, 255, 0.35);
+            color: #333;
+        }
+
+        .user-message {
+            background: linear-gradient(135deg, #ccc4b4, #a8a090);
+            color: #fff;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+
+        .bot-message {
+            background: rgba(255, 255, 255, 0.6);
+            color: #333;
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+
+        .chat-input {
+            padding: 12px;
+            background: transparent;
+            display: flex;
+            gap: 8px;
+            border-top: 1px solid rgba(204, 196, 180, 0.4);
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 1px solid rgba(204, 196, 180, 0.5);
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.25);
+            color: #333;
+            outline: none;
+            font-size: clamp(12px, 3vw, 14px);
+            transition: all 0.3s ease;
+        }
+
+        .chat-input input:focus {
+            border-color: #ccc4b4;
+            box-shadow: 0 0 5px rgba(204, 196, 180, 0.5);
+        }
+
+        .chat-input button {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #ccc4b4, #b8b0a0);
+            color: #fff;
+            cursor: pointer;
+            font-size: clamp(12px, 3vw, 14px);
+            transition: all 0.3s ease;
+        }
+
+        .chat-input button:hover {
+            background: linear-gradient(135deg, #b8b0a0, #a8a090);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .chat-body::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .chat-body::-webkit-scrollbar-thumb {
+            background: #ccc4b4;
+            border-radius: 10px;
+        }
+
+        .floater-logo {
+            display: none;
+            color: #fff;
+            font-size: clamp(14px, 4vw, 16px);
+            text-align: center;
+            line-height: 35px;
+            background: linear-gradient(135deg, #ccc4b4, #b8b0a0);
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .chat-container.collapsed .floater-logo {
+            display: block;
+        }
+
+        .chat-container.collapsed .chat-header {
+            padding: 0;
+            height: 100%;
+        }
+
+        .chat-container.collapsed .toggle-btn {
+            display: none;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 3;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 80%;
+            max-height: 80%;
+            overflow: auto;
+            position: relative;
+        }
+
+        .modal-content pre {
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 20px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="renderCanvas"></canvas>
+    <div class="chat-container" id="chatContainer">
+        <div class="chat-header" onclick="toggleChat(event)">
+            <span id="headerText">iMMi-1485</span>
+            <span class="toggle-btn" onclick="toggleChat(event)">×</span>
+            <span class="floater-logo">iMMi</span>
+        </div>
+        <div class="chat-body" id="chatBody"></div>
+        <div class="chat-input">
+            <input type="text" id="userInput" placeholder="Type your message...">
+            <button onclick="sendMessage()">Send</button>
+            <button onclick="showGraphJson()">Show Graph JSON</button>
+        </div>
+    </div>
+    <div class="modal" id="jsonModal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">×</span>
+            <pre id="jsonOutput"></pre>
+        </div>
+    </div>
+
+    <script src="https://cdn.babylonjs.com/babylon.js"></script>
+    <script src="https://cdn.babylonjs.com/gui/babylon.gui.min.js"></script>
+    <script>
+        const questions = [
+            "What's your favorite hobby?",
+            "Do you prefer indoors or outdoors?",
+            "What’s your favorite type of music?",
+            "Are you more of a morning person or night owl?",
+            "What’s one thing you’d like to learn?"
+        ];
+
+        const questionKeywords = {
+            "What's your favorite hobby?": "Hobby",
+            "Do you prefer indoors or outdoors?": "Preference",
+            "What’s your favorite type of music?": "Music",
+            "Are you more of a morning person or night owl?": "Schedule",
+            "What’s one thing you’d like to learn?": "Skill"
+        };
+
+        let questionIndex = 0;
+        let userResponses = {};
+        let graphData = { nodes: [], edges: [] };
+        let askedQuestions = new Set();
+
+        const canvas = document.getElementById('renderCanvas');
+        const engine = new BABYLON.Engine(canvas, true);
+        const chatContainer = document.getElementById('chatContainer');
+        const chatBody = document.getElementById('chatBody');
+        const userInput = document.getElementById('userInput');
+        const jsonModal = document.getElementById('jsonModal');
+        const jsonOutput = document.getElementById('jsonOutput');
+
+        let scene, camera, nodes = {}, edges = {}, nodeLabels = {}, edgeLabels = {}, advancedTexture;
+
+        function createScene() {
+            scene = new BABYLON.Scene(engine);
+            scene.clearColor = new BABYLON.Color3(0.95, 0.95, 0.95);
+
+            const light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
+            light.intensity = 0.7;
+
+            camera = new BABYLON.ArcRotateCamera("camera", Math.PI / 2, Math.PI / 4, 10, BABYLON.Vector3.Zero(), scene);
+            camera.attachControl(canvas, true);
+            camera.minZ = 0.1;
+            camera.maxZ = 100;
+
+            advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+
+            return scene;
+        }
+
+        function updateGraph(question, response) {
+            if (!graphData.nodes.some(node => node.id === 'User')) {
+                graphData.nodes.push({ id: 'User', x: 0, y: 0, z: 0, level: 0 });
+                createNode('User', 0, 0, 0, '#f0e8d0');
+            }
+
+            const responseId = response.length > 5 ? response.substring(0, 5) : response;
+            const responseNodes = graphData.nodes.filter(node => node.level === 2);
+            const numResponses = responseNodes.length;
+            const radius = 4;
+            const angle = (numResponses / (numResponses + 1)) * 2 * Math.PI;
+            const x = radius * Math.sin(angle);
+            const z = radius * Math.cos(angle);
+            graphData.nodes.push({
+                id: responseId,
+                x: x,
+                y: 0,
+                z: z,
+                level: 2
+            });
+            createNode(responseId, x, 0, z, '#e8e0c0');
+
+            const questionKeyword = questionKeywords[question];
+            const edgeKey = `User->${responseId}`;
+            graphData.edges.push({ from: 'User', to: responseId, label: questionKeyword });
+            createEdge('User', responseId, questionKeyword);
+
+            repositionNodes();
+        }
+
+        function repositionNodes() {
+            const responseNodes = graphData.nodes.filter(node => node.level === 2);
+            const numResponses = responseNodes.length;
+            const radius = 4;
+
+            responseNodes.forEach((node, index) => {
+                const angle = (index / numResponses) * 2 * Math.PI;
+                const x = radius * Math.sin(angle);
+                const z = radius * Math.cos(angle);
+                node.x = x;
+                node.z = z;
+
+                if (nodes[node.id]) {
+                    nodes[node.id].position.x = x;
+                    nodes[node.id].position.z = z;
+                }
+
+                const edgeKey = `User->${node.id}`;
+                if (edges[edgeKey]) {
+                    edges[edgeKey].dispose();
+                    createEdge('User', node.id, graphData.edges.find(edge => edge.from === 'User' && edge.to === node.id).label);
+                }
+            });
+        }
+
+        function createNode(id, x, y, z, color) {
+            const sphere = BABYLON.MeshBuilder.CreateSphere(id, { diameter: 0.5 }, scene);
+            sphere.position = new BABYLON.Vector3(x, y, z);
+            sphere.material = new BABYLON.StandardMaterial(id + "Mat", scene);
+            sphere.material.diffuseColor = BABYLON.Color3.FromHexString(color);
+            nodes[id] = sphere;
+
+            const label = new BABYLON.GUI.TextBlock();
+            label.text = id;
+            label.color = "#333";
+            label.fontSize = 24;
+            label.fontFamily = "Roboto";
+            label.paddingLeft = "10px";
+            label.paddingTop = "10px";
+            label.isVisible = false;
+            advancedTexture.addControl(label);
+            label.linkWithMesh(sphere);
+            label.linkOffsetY = -30;
+            nodeLabels[id] = label;
+
+            sphere.actionManager = new BABYLON.ActionManager(scene);
+            sphere.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger, (evt) => {
+                console.log(`Clicked on node: ${id}`);
+                sphere.material.emissiveColor = new BABYLON.Color3(1, 0, 0);
+                setTimeout(() => {
+                    sphere.material.emissiveColor = BABYLON.Color3.Black();
+                }, 1000);
+
+                label.isVisible = !label.isVisible;
+
+                Object.keys(edgeLabels).forEach(edgeKey => {
+                    const [from, to] = edgeKey.split('->');
+                    if (from === id || to === id) {
+                        edgeLabels[edgeKey].isVisible = label.isVisible;
+                    }
+                });
+            }));
+        }
+
+        function createEdge(fromId, toId, labelText) {
+            const fromNode = nodes[fromId];
+            const toNode = nodes[toId];
+            const edgeKey = `${fromId}->${toId}`;
+            const lines = BABYLON.MeshBuilder.CreateLines(edgeKey, {
+                points: [fromNode.position, toNode.position]
+            }, scene);
+            lines.color = new BABYLON.Color3(0.8, 0.8, 0.8);
+            edges[edgeKey] = lines;
+
+            const midPoint = BABYLON.Vector3.Lerp(fromNode.position, toNode.position, 0.5);
+            const label = new BABYLON.GUI.TextBlock();
+            label.text = labelText;
+            label.color = "#333";
+            label.fontSize = 20;
+            label.fontFamily = "Roboto";
+            label.isVisible = false;
+            advancedTexture.addControl(label);
+            label.linkWithMesh(lines);
+            label.linkOffsetY = -20;
+            edgeLabels[edgeKey] = label;
+        }
+
+        function showGraphJson() {
+            const displayGraphData = {
+                nodes: graphData.nodes,
+                edges: graphData.edges
+            };
+            jsonOutput.textContent = JSON.stringify(displayGraphData, null, 2);
+            jsonModal.style.display = 'flex';
+        }
+
+        function closeModal() {
+            jsonModal.style.display = 'none';
+        }
+
+        function render() {
+            engine.runRenderLoop(() => {
+                scene.render();
+            });
+            window.addEventListener('resize', () => {
+                engine.resize();
+            });
+        }
+
+        function sendMessage() {
+            const messageText = userInput.value.trim();
+            if (messageText === '') return;
+
+            if (questionIndex >= questions.length) {
+                addBotMessage("I've asked all my questions! Thanks for chatting.");
+                userInput.disabled = true;
+                return;
+            }
+
+            const userMsg = document.createElement('div');
+            userMsg.classList.add('message', 'user-message');
+            userMsg.textContent = messageText;
+            chatBody.appendChild(userMsg);
+
+            userResponses[questions[questionIndex]] = messageText;
+            updateGraph(questions[questionIndex], messageText);
+
+            askedQuestions.add(questions[questionIndex]);
+            questionIndex++;
+
+            if (questionIndex < questions.length) {
+                setTimeout(() => addBotMessage(questions[questionIndex]), 1000);
+            } else {
+                setTimeout(() => addBotMessage("I've asked all my questions! Thanks for chatting."), 1000);
+                userInput.disabled = true;
+            }
+
+            userInput.value = '';
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }
+
+        function addBotMessage(text) {
+            const botMsg = document.createElement('div');
+            botMsg.classList.add('message', 'bot-message');
+            botMsg.textContent = text;
+            chatBody.appendChild(botMsg);
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }
+
+        function toggleChat(event) {
+            event.stopPropagation(); // Prevent drag from triggering on toggle click
+            chatContainer.classList.toggle('collapsed');
+            const isCollapsed = chatContainer.classList.contains('collapsed');
+            if (!isCollapsed) {
+                // When opening, ensure it’s centered if no previous position
+                if (!chatContainer.style.left || !chatContainer.style.top) {
+                    currentX = window.innerWidth / 2 - 200;
+                    currentY = window.innerHeight / 2 - 300;
+                    updateLayout();
+                }
+            }
+            updateLayout();
+        }
+
+        let isDragging = false;
+        let currentX = window.innerWidth / 2 - 200;
+        let currentY = window.innerHeight / 2 - 300;
+        let velocityX = 0;
+        let velocityY = 0;
+        let targetX = currentX;
+        let targetY = currentY;
+        const stiffness = 0.1;
+        const damping = 0.8;
+
+        const chatHeader = document.querySelector('.chat-header');
+        chatHeader.addEventListener('mousedown', startDragging);
+        document.addEventListener('mousemove', drag);
+        document.addEventListener('mouseup', stopDragging);
+
+        chatHeader.addEventListener('touchstart', startDragging, { passive: false });
+        document.addEventListener('touchmove', drag, { passive: false });
+        document.addEventListener('touchend', stopDragging);
+
+        function startDragging(e) {
+            if (e.target.classList.contains('toggle-btn')) return; // Prevent dragging if clicking toggle button
+
+            isDragging = true;
+            const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+            const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+            targetX = currentX;
+            targetY = currentY;
+            initialX = clientX - targetX;
+            initialY = clientY - targetY;
+        }
+
+        function drag(e) {
+            if (isDragging) {
+                e.preventDefault();
+                const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+                const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+                targetX = clientX - initialX;
+                targetY = clientY - initialY;
+            }
+        }
+
+        function stopDragging() {
+            isDragging = false;
+        }
+
+        function animate() {
+            const dx = targetX - currentX;
+            const dy = targetY - currentY;
+
+            velocityX += dx * stiffness;
+            velocityY += dy * stiffness;
+            velocityX *= damping;
+            velocityY *= damping;
+
+            currentX += velocityX;
+            currentY += velocityY;
+
+            const width = chatContainer.classList.contains('collapsed') ? 90 : 400;
+            const height = chatContainer.classList.contains('collapsed') ? 35 : 600;
+            currentX = Math.max(0, Math.min(currentX, window.innerWidth - width));
+            currentY = Math.max(0, Math.min(currentY, window.innerHeight - height));
+
+            chatContainer.style.left = currentX + 'px';
+            chatContainer.style.top = currentY + 'px';
+
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+
+        window.addEventListener('resize', updateLayout);
+        window.addEventListener('orientationchange', updateLayout);
+
+        function updateLayout() {
+            const width = chatContainer.classList.contains('collapsed') ? 90 : 400;
+            const height = chatContainer.classList.contains('collapsed') ? 35 : 600;
+            currentX = Math.max(0, Math.min(currentX, window.innerWidth - width));
+            currentY = Math.max(0, Math.min(currentY, window.innerHeight - height));
+            chatContainer.style.left = currentX + 'px';
+            chatContainer.style.top = currentY + 'px';
+        }
+
+        scene = createScene();
+        render();
+        setTimeout(() => addBotMessage(questions[questionIndex]), 1000);
+
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+    </script>
+</body>
+</html>
