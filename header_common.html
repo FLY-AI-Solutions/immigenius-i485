@@ -12,7 +12,6 @@
         .header {
             background: #f5f5f5;
             padding: 15px 20px;
-            position: relative;
             width: 100%;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
@@ -42,39 +41,8 @@
             font-size: 1.1em;
             padding: 10px 15px;
             transition: color 0.3s ease;
-            position: relative;
         }
         .nav-link:hover {
-            color: #ccc4b4;
-        }
-        .dropdown {
-            position: relative;
-        }
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            background: #f5f5f5;
-            min-width: 250px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            z-index: 1;
-            top: 100%;
-            left: 0;
-            padding: 10px 0;
-        }
-        .dropdown:hover .dropdown-content {
-            display: block;
-            animation: fadeIn 0.2s ease;
-        }
-        .dropdown-content a {
-            color: #8a7f6b;
-            padding: 10px 20px;
-            text-decoration: none;
-            display: block;
-            font-size: 0.95em;
-            font-weight: 500;
-        }
-        .dropdown-content a:hover {
-            background: #ececec;
             color: #ccc4b4;
         }
         .menu-toggle {
@@ -114,27 +82,10 @@
                 padding: 15px 20px;
                 text-align: center;
             }
-            .dropdown-content {
-                position: static;
-                width: 100%;
-                box-shadow: none;
-                padding: 0;
-                background: #ececec;
-            }
-            .dropdown:hover .dropdown-content {
-                display: none;
-            }
-            .nav.active .dropdown-content {
-                display: block;
-            }
         }
         @keyframes slideDown {
             from { opacity: 0; transform: translateY(-10px); }
             to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
         }
     </style>
 </head>
@@ -145,14 +96,7 @@
                 <img src="imgs/immigenius_logo_transparent.png" alt="Logo" class="logo-img">
             </a>
             <nav class="nav">
-                <div class="dropdown">
-                    <a href="#" class="nav-link">Resources</a>
-                    <div class="dropdown-content">
-                        <a href="https://www.uscis.gov/sites/default/files/document/forms/i-485instr.pdf" target="_blank">I-485 Filing Instructions</a>
-                        <a href="https://www.uscis.gov/forms/all-forms/direct-filing-addresses-for-form-i-485-application-to-register-permanent-residence-or-adjust-status" target="_blank">Where to File I-485</a>
-                        <a href="https://www.uscis.gov/forms/filing-fees" target="_blank">Fee Information</a>
-                    </div>
-                </div>
+                <a href="resources.html" class="nav-link" target="_parent">Resources</a>
                 <a href="mailto:contact@example.com" class="nav-link">Contact Us</a>
             </nav>
             <button class="menu-toggle" aria-label="Toggle menu">☰</button>
@@ -164,6 +108,18 @@
             nav.classList.toggle('active');
             const isOpen = nav.classList.contains('active');
             parent.postMessage(isOpen ? 'menuOpened' : 'menuClosed', '*');
+            
+            // Adjust iframe height
+            const headerHeight = document.querySelector('.header').offsetHeight;
+            const navHeight = nav.offsetHeight;
+            const totalHeight = isOpen ? headerHeight + navHeight : headerHeight;
+            window.parent.postMessage({ height: totalHeight }, '*');
+        });
+
+        // Initial height setting
+        window.addEventListener('load', () => {
+            const headerHeight = document.querySelector('.header').offsetHeight;
+            window.parent.postMessage({ height: headerHeight }, '*');
         });
     </script>
 </body>
