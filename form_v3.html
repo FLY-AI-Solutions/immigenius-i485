@@ -735,7 +735,7 @@
         
             console.log("Survey Data being sent:", JSON.stringify(surveyData, null, 2)); // Log payload for debugging
         
-            const surveyApiUrl = "http://api.flyai.online/flyai-backend/api/v1/survey"; // Updated endpoint
+            const surveyApiUrl = "https://api.flyai.online/api/survey_v2"; // Updated endpoint
             try {
                 const response = await fetch(surveyApiUrl, {
                     method: "POST",
