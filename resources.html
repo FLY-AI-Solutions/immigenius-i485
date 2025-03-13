@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resources</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            color: #8a7f6b;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        h1, h2 {
+            color: #8a7f6b;
+            margin-bottom: 20px;
+        }
+        h1 {
+            font-size: 2em;
+        }
+        h2 {
+            font-size: 1.5em;
+        }
+        .resources-list {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 40px;
+        }
+        .resources-list li {
+            margin: 15px 0;
+        }
+        .resources-list a {
+            color: #8a7f6b;
+            text-decoration: none;
+            font-size: 1.1em;
+            transition: color 0.3s ease;
+        }
+        .resources-list a:hover {
+            color: #ccc4b4;
+        }
+        section {
+            margin-bottom: 40px;
+        }
+        p {
+            line-height: 1.6;
+            font-size: 1em;
+        }
+        .note {
+            font-style: italic;
+            background: #ececec;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        ol {
+            padding-left: 20px;
+            line-height: 1.6;
+        }
+        ul {
+            padding-left: 20px;
+            margin: 10px 0;
+        }
+        a {
+            color: #8a7f6b;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        a:hover {
+            color: #ccc4b4;
+        }
+    </style>
+</head>
+<body>
+    <iframe src="header_common.html" id="header-frame" style="width: 100%; border: none; height: 70px;"></iframe>
+    <div class="container">
+        <h1>Resources</h1>
+        <ul class="resources-list">
+            <li><a href="https://www.uscis.gov/sites/default/files/document/forms/i-485instr.pdf" target="_blank">Instructions for I-485 Filing</a></li>
+            <li><a href="https://www.uscis.gov/forms/all-forms/direct-filing-addresses-for-form-i-485-application-to-register-permanent-residence-or-adjust-status" target="_blank">Where to File - Either with Pending or Approved Form I-140 OR concurrently filing with Form I-140</a></li>
+            <li><a href="https://www.uscis.gov/forms/filing-fees" target="_blank">Fee Related Information</a></li>
+        </ul>
+
+        <!-- Section: Overview and Disclaimer -->
+        <section>
+            <h2>Overview</h2>
+            <p>
+                Form I-485, Application to Register Permanent Residence or Adjust Status, is a critical step in the U.S. immigration process. 
+                Properly completing and submitting this form, along with required evidence, can be time-consuming. 
+                This website aims to simplify the preparation of certain documents—specifically, a <strong>cover letter</strong> 
+                and <strong>exhibit list</strong>—to include in your I-485 package.
+            </p>
+            <p>
+                By filling in the details below and clicking “Submit,” you can generate a draft letter in PDF format 
+                (hosted on Overleaf) that outlines the items you’re including in your application package. 
+                We strongly recommend cross-checking the auto-generated list and attaching additional evidence 
+                pertinent to your specific situation.
+            </p>
+            <p class="note"><strong>Important Disclaimer:</strong> 
+                This tool is for guidance only and does not substitute legal advice. Always verify 
+                <a href="https://www.uscis.gov/" target="_blank" rel="noopener">USCIS official resources</a> 
+                or consult an immigration attorney for personalized assistance.
+            </p>
+        </section>
+
+        <!-- Section: Instructions -->
+        <section>
+            <h2>How to Use This Tool</h2>
+            <ol>
+                <li>Complete the form below, ensuring accuracy of all details.</li>
+                <li>Upon clicking “Submit,” you will be directed to sign in to your 
+                    <a href="https://www.overleaf.com/" target="_blank" rel="noopener">Overleaf Account</a> to view/edit 
+                    a generated LaTeX project. This project contains:
+                    <ul>
+                        <li>A draft I-485 cover letter addressing USCIS.</li>
+                        <li>An exhibit list that organizes common supporting evidence.</li>
+                    </ul>
+                </li>
+                <li>Review, edit, or add any missing information. Then compile the project into a PDF.</li>
+                <li>Print and place the PDF cover letter and exhibit list on top of your supporting documents 
+                    in your I-485 application package.</li>
+            </ol>
+            <p class="note">
+                <strong>Tip:</strong> If you encounter a popup-blocking issue, 
+                please use Google Chrome or allow popups on your current browser.
+            </p>
+        </section>
+    </div>
+    <script>
+        window.addEventListener('message', (event) => {
+            const iframe = document.getElementById('header-frame');
+            if (event.data.height) {
+                iframe.style.height = `${event.data.height}px`;
+            }
+        });
+    </script>
+</body>
+</html>
