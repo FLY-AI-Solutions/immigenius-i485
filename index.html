@@ -125,6 +125,17 @@
         .footer img:hover {
             transform: translateY(-5px);
         }
+        .footer .terms-link {
+            font-size: 0.7rem; /* Smaller font size for Terms link */
+            margin-top: 5px;
+            display: block;
+        }
+        .footer .terms-link a {
+            color: #cccb4b; /* Matches your theme */
+        }
+        .footer .terms-link a:hover {
+            text-decoration: underline;
+        }
 
         /* Media Queries for Mobile */
         @media (max-width: 768px) {
@@ -150,6 +161,9 @@
             .footer img {
                 max-width: 70px;
             }
+            .footer .terms-link {
+                font-size: 0.65rem; /* Slightly smaller on mobile */
+            }
         }
 
         @media (max-width: 480px) {
@@ -164,6 +178,9 @@
             }
             .card p {
                 font-size: 0.75rem;
+            }
+            .footer .terms-link {
+                font-size: 0.6rem; /* Even smaller on very small screens */
             }
         }
 
@@ -201,8 +218,7 @@
         </div>
         <div class="card">
             Confused? 🤔 <br>
-<!--             <a href="https://immigenius.us/immi-i485" target="_blank"> -->
-                <a href="save-contact.html" target="_blank">
+            <a href="save-contact.html" target="_blank">
                 <h2>Consult <span class="highlight">iMMi</span>, Our Expert AI Agent</h2>
                 <p>Get personalized AI guidance for your packet. ImmI is regularly trained on up-to-date USCIS docs, to help you determine additional forms/evidence you need with I-485 application.</p>
                 <canvas id="aiCanvas"></canvas>
@@ -211,6 +227,7 @@
     </div>
     <div class="footer">
         <p>Powered by <a href="https://flyai.online" target="_blank"><img src="imgs/flyai_logo_short.png" alt="FLYAI Logo"></a></p>
+        <p class="terms-link"><a href="terms.html">Terms and Conditions</a></p>
     </div>
 
     <script>
@@ -250,7 +267,6 @@
         }
 
         function animate() {
-            // Always animate by default, unless Card 1 is hovered
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             nodes.forEach(node => {
                 node.update();
@@ -272,7 +288,6 @@
             requestAnimationFrame(animate);
         }
 
-        // Start animation immediately after page load
         window.addEventListener('load', () => {
             animate();
         });
