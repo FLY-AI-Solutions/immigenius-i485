@@ -95,7 +95,7 @@ document.getElementById('contactForm').addEventListener('submit', function(e) {
                 document.getElementById('contactForm').reset();
                 setTimeout(() => messageDiv.classList.remove('show'), 3000);
             }, 2000);
-            // window.location.href = 'https://immigenius.us'; // changed here
+            window.location.href = 'https://immigenius.us'; // changed here
         } else {
             messageDiv.textContent = result.error || 'Something went wrong';
             messageDiv.classList.add('show');
