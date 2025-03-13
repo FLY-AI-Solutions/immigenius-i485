@@ -247,7 +247,7 @@
                         <input type="text" id="researchField" name="researchField" required>
                     </div>
                     <div class="form-card">
-                        <label for="refundConfidence">Refund Confidence (1-10)</label>
+                        <label for="refundConfidence">Refund Offer Received (for I-140) (%)</label>
                         <input type="number" id="refundConfidence" name="refundConfidence" min="1" max="10" required>
                     </div>
                     <div class="form-card">
@@ -271,15 +271,15 @@
                         <input type="text" id="finalLawyer" name="finalLawyer" required>
                     </div>
                     <div class="form-card">
-                        <label for="dataConsent">Data Consent</label>
+                        <label for="dataConsent">Data Consent: See <a href="terms.html">Terms and Conditions</a> for details. </label>
                         <select id="dataConsent" name="dataConsent" required>
                             <option value="Yes">Yes</option>
-                            <option value="No">No</option>
+                            <option value="No">No </option>
                         </select>
                     </div>
                     <!-- Separate File Upload Form -->
                     <div class="form-card">
-                        <label for="file">Upload PDF</label>
+                        <label for="file">I-140 Resume Upload (PDF)</label>
                         <input type="file" id="file" name="file" accept=".pdf" required>
                         <button type="button" onclick="uploadFile()">Upload File</button>
                         <p id="fileUploadStatus"></p>
