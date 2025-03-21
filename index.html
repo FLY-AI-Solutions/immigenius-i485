@@ -37,6 +37,21 @@
             animation: slideIn 1s ease-in 0.5s forwards;
             opacity: 0;
         }
+        .highlight-box {
+            display: inline-block;
+            padding: 5px 12px;
+            background: rgba(252, 169, 5, 0.2); /* Light orange background */
+            border: 2px solid rgba(252, 169, 5, 0.8); /* Orange border */
+            border-radius: 8px;
+            color: #333; /* Dark text for contrast */
+            font-weight: 700; /* Bold text */
+            animation: pulse 2s infinite; /* Subtle pulsing effect */
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
         .options {
             display: flex;
             flex-wrap: wrap;
@@ -205,7 +220,7 @@
 <body>
     <div class="header">
         <img src="imgs/immigenius_logo_transparent.png" alt="Immigenius by FLYAI Logo #ccc4b4 back"> 
-        <p>Self-Filing? <br> Simplify Your <b>I-485</b> Preparation with AI</p>
+        <p><span class="highlight-box">Self-Filing?</span> <br> Simplify Your <b>I-485</b> Preparation with US</p>
     </div>
     <div class="options">
         <div class="card">
