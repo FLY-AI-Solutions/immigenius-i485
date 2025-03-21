@@ -39,18 +39,16 @@
         }
         .highlight-box {
             display: inline-block;
-            padding: 5px 12px;
-            background: rgba(252, 169, 5, 0.2); /* Light orange background */
-            border: 2px solid rgba(252, 169, 5, 0.8); /* Orange border */
-            border-radius: 8px;
-            color: #333; /* Dark text for contrast */
-            font-weight: 700; /* Bold text */
-            animation: pulse 2s infinite; /* Subtle pulsing effect */
-        }
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
+            padding: 6px 14px;
+            background: #fff; /* White background for a clean look */
+            border: 2px solid rgba(252, 169, 5, 0.9); /* Prominent orange border */
+            border-radius: 5px; /* Subtle rounding */
+            color: #333; /* Dark, professional text color */
+            font-weight: 700; /* Bold weight */
+            font-size: 1.2rem; /* Larger, prominent font size */
+            text-transform: uppercase; /* Uppercase for authority */
+            letter-spacing: 1px; /* Spacing for readability */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
         }
         .options {
             display: flex;
@@ -179,6 +177,16 @@
             .footer .terms-link {
                 font-size: 0.65rem; /* Slightly smaller on mobile */
             }
+            .highlight-box {
+                font-size: 1.1rem; /* Slightly smaller on tablets */
+            }
+            /* Override card animations for mobile */
+            .card:nth-child(1) {
+                animation: fadeInUp 1s ease-in 1s forwards;
+            }
+            .card:nth-child(2) {
+                animation: fadeInUp 1s ease-in 1.2s forwards; /* Slightly delayed for stagger */
+            }
         }
 
         @media (max-width: 480px) {
@@ -197,6 +205,10 @@
             .footer .terms-link {
                 font-size: 0.6rem; /* Even smaller on very small screens */
             }
+            .highlight-box {
+                font-size: 1rem; /* Smaller on mobile */
+                padding: 4px 10px; /* Adjust padding for smaller screens */
+            }
         }
 
         @keyframes fadeIn {
@@ -214,6 +226,10 @@
         @keyframes fadeInRight {
             from { opacity: 0; transform: translateX(50px); }
             to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
