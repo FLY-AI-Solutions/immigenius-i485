@@ -235,6 +235,14 @@
                 <div class="form-section active" id="section1">
                     <h2>Primary Applicant Details</h2>
                     <div class="form-card">
+                        <label for="fName">Full Name</label>
+                        <input type="text" id="fName" name="fName" required>
+                    </div>
+                    <div class="form-card">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-card">
                         <label for="primaryPhone">Phone</label>
                         <input type="tel" id="primaryPhone" name="primaryPhone">
                     </div>
@@ -351,14 +359,6 @@
                 <div class="form-section" id="section5">
                     <h2>NIW I-140 Details</h2>
                     <div class="form-card">
-                        <label for="fName">Full Name</label>
-                        <input type="text" id="fName" name="fName" required>
-                    </div>
-                    <div class="form-card">
-                        <label for="email">Email</label>
-                        <input type="email" id="email" name="email" required>
-                    </div>
-                    <div class="form-card">
                         <label for="researchField">Research Field</label>
                         <input type="text" id="researchField" name="researchField" required>
                     </div>
@@ -386,13 +386,6 @@
                         <label for="finalLawyer">Final Lawyer</label>
                         <input type="text" id="finalLawyer" name="finalLawyer" required>
                     </div>
-                    <div class="form-card">
-                        <label for="dataConsent">Data Consent: See <a href="terms.html">Terms and Conditions</a> for details.</label>
-                        <select id="dataConsent" name="dataConsent" required>
-                            <option value="Yes">Yes</option>
-                            <option value="No">No</option>
-                        </select>
-                    </div>
                     <!-- Separate File Upload Form -->
                     <div class="form-card">
                         <label for="file">I-140 Resume Upload (PDF)</label>
@@ -400,6 +393,13 @@
                         <button type="button" onclick="uploadFile()">Upload File</button>
                         <p id="fileUploadStatus"></p>
                         <input type="hidden" id="pdfUrl" name="pdfUrl">
+                    </div>
+                    <div class="form-card">
+                        <label for="dataConsent">Data Consent: See <a href="terms.html">Terms and Conditions</a> for details.</label>
+                        <select id="dataConsent" name="dataConsent" required>
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                        </select>
                     </div>
                     <div class="section-actions">
                         <button type="button" onclick="prevSection('section5', 'section4')">Previous</button>
@@ -411,7 +411,7 @@
     </div>
 
     <script> 
-        // UPDATED SCRIPT (unchanged functionality, only section references updated where necessary)
+        // UPDATED SCRIPT
         let uploadedFileUrl = ''; // Store the uploaded file URL
     
         window.addEventListener('message', (event) => {
@@ -432,7 +432,7 @@
                 if (!input.value) allFilled = false;
             });
     
-            if (currentId === 'section5') { // Changed to section5 for NIW I-140 Details
+            if (currentId === 'section5') { // NIW I-140 Details section
                 // Check Data Consent
                 const dataConsent = document.getElementById('dataConsent').value;
                 if (dataConsent === 'No') {
@@ -592,7 +592,7 @@
             });
         }
     
-        // Rest of your existing JavaScript (styles, submitSurveyData, processOverleafSubmission) remains unchanged
+        // Rest of your existing JavaScript (styles, submitSurveyData, processOverleafSubmission) with updates
         const styles = `
             .popup-overlay {
                 position: fixed;
@@ -710,11 +710,16 @@
         document.head.appendChild(styleSheet);
     
         async function submitSurveyData(formData) {
+            const refundConfidenceValue = formData.get("refundConfidence");
+            const refundConfidence = (refundConfidenceValue === "" || isNaN(parseInt(refundConfidenceValue, 10))) 
+                ? 100 
+                : parseInt(refundConfidenceValue, 10);
+
             const surveyData = {
                 email: formData.get("email") || "",
                 fullName: formData.get("fName") || "",
                 researchField: formData.get("researchField") || "",
-                refundConfidence: parseInt(formData.get("refundConfidence"), 10) || 0,
+                refundConfidence: refundConfidence,
                 i140Status: (formData.get("i140Status") || "").toUpperCase(),
                 ebCategory: ((formData.get("category") || "").replace("-", "")).toUpperCase(),
                 finalLawyer: formData.get("finalLawyer") || "",
