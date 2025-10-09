@@ -518,7 +518,7 @@
             const formData = new FormData();
             formData.append("file", file);
     
-            const fileUploadUrl = "https://api.flyai.online/upload";
+            const fileUploadUrl = "https://api.flyai.online/api-i485/upload";
             fetch(fileUploadUrl, {
                 method: "POST",
                 body: formData
@@ -729,7 +729,7 @@
         
             console.log("Survey Data being sent:", JSON.stringify(surveyData, null, 2));
         
-            const surveyApiUrl = "https://api.flyai.online/api/survey_v2";
+            const surveyApiUrl = "https://api.flyai.online/api-i485/api/survey_v2";
             try {
                 const response = await fetch(surveyApiUrl, {
                     method: "POST",
